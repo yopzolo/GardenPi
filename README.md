@@ -11,10 +11,10 @@ This is an implementation of webiopi dedicated to indoor growing
 
 * **get a pi ..**
 * download and install webiopi [instructions here](http://code.google.com/p/webiopi/wiki/INSTALL)
-    * '$ wget http://webiopi.googlecode.com/files/WebIOPi-0.6.0.tar.gz'
-    * '$ tar xvzf WebIOPi-0.6.0.tar.gz'
-    * '$ cd WebIOPi-0.6.0'
-    * '$ sudo ./setup.sh'
+    * `$ wget http://webiopi.googlecode.com/files/WebIOPi-0.6.0.tar.gz`
+    * `$ tar xvzf WebIOPi-0.6.0.tar.gz`
+    * `$ cd WebIOPi-0.6.0`
+    * `$ sudo ./setup.sh`
 * clone this repository
 * run webiopi from inside your clone : `$ sudo webiopi -c config`
 
