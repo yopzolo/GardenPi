@@ -22,11 +22,5 @@ This is an implementation of webiopi dedicated to indoor growing
 
 ## first screenshots
 
-![ligth On][screenLigthOn]
-![ligth Off][screenLigthOff]
-
-
-
-
-[screenLigthOn]: screens/Capture d’écran 2013-04-19 à 02.00.50.png
-[screenLigthOff]: screens/Capture d’écran 2013-04-19 à 02.01.07.png
+![ligth On](screens/Capture d’écran 2013-04-19 à 02.00.50.png)
+![ligth Off](screens/Capture d’écran 2013-04-19 à 02.01.07.png)
