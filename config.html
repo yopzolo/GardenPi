@@ -7,15 +7,14 @@
 	<script type="text/javascript" src="/webiopi.js"></script>
 	<script type="text/javascript">
 
-	function setConfig(duration){
-		webiopi().callMacro("setConfig", duration, null);
-	}
-
-	function createFieldSet(data){
-
+	function createFieldSet(data, name){
 		var fieldset = document.createElement("fieldset");
-		// fieldset.setAttribute("name", key);
-		
+		fieldset.setAttribute("name", name);
+
+		var legend = document.createElement("legend");
+		legend.innerHTML = name;
+		fieldset.appendChild(legend);
+
 		for (var key in data) {
 			var label = document.createElement("label");
 			label.setAttribute("for", key);
@@ -23,10 +22,7 @@
 			fieldset.appendChild(label);
 
 			var input = document.createElement("input");
-			input.setAttribute("name", key);
-			input.setAttribute("id", key);
 			input.setAttribute("value", data[key]);
-
     		fieldset.appendChild(input);
 		}
 
@@ -34,11 +30,9 @@
 	}
 
 	function createConfigForm(form, data){
-		var lcForm = document.createElement("form");
-
 		var dataDict = JSON.parse(data);
 		for (var key in dataDict) {
-			lcForm.appendChild(createFieldSet(dataDict[key]));
+			form.appendChild(createFieldSet(dataDict[key], key));
 		}
 
 		var saveButton = document.createElement("button");
@@ -46,27 +40,17 @@
 
     	saveButton.onclick=function(){
     		var data = [];
-    		var lcForm = document.getElementById('form');
-    		var fieldSets = lcForm.getElementsByTagName('fieldset');
-    		for (var fieldset in fieldSets){
-    			data[fieldset] = [];
+    		var inputs = document.getElementById('form').getElementsByTagName('input');
+    		for(var i = 0; i < inputs.length; i++)
+				data[i] = inputs[i].value;
 
-    			var inputs = fieldSets[fieldset].elements;
-				for (var input in inputs){
-					data[fieldset][input] = inputs[input];
-    			}
-    		}
-
-data['plop']="pilip";
-        	webiopi().callMacro('setConfig', JSON.stringify(data), "");
+        	webiopi().callMacro('setConfig', data);
 
         	return false;
 	    };
 	
 		
-		lcForm.appendChild(saveButton);
-
-		form.appendChild(lcForm);
+		form.appendChild(saveButton);
 	}
 
 	webiopi().ready(function() {
@@ -78,24 +62,28 @@ data['plop']="pilip";
 	</script>
 	<style type="text/css">
 		form {
-			display: block;
-			margin: 5px 5px 5px 5px;
-			width: 320px;
+			/*margin: 5px 5px 5px 5px;*/
+			width: 340px;
 		}
 
-		form > input {
-			/*margin: 5px 5px 5px 5px;*/
-			width: 600px;
-			/*height: 45px;*/
+		button {
+			margin: 5px 0;
+    		border: 0;
+    		color: black;
+    		font-size: 14pt;
+    		font-weight: bold;
+    		height: inherit;
+    		padding: 0;
+    		width: inherit;
 		}
 
 	</style>
 </head>
 <body>
 
-	<div id="nav"><a href="dashboard.html">dashboard</a></div>
+	<div id="nav"><a href="dashboard.html">&lt; dashboard</a></div>
 	<div id="content" align="center">
-		<div id="form"></div>
+		<form id="form"></form>
 	</div>
 </body>
 </html>
