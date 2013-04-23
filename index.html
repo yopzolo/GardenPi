@@ -9,7 +9,8 @@
 	webiopi().ready(function() {
 
 		$("#buttons").append(webiopi().createGPIOButton("23", "LIGHT"));
-	
+		$("#buttons").append(webiopi().createMacroButton("config","config", "setConfig", "12,8"));
+
 		webiopi().refreshGPIO(true);
 	});
 	</script>
@@ -39,6 +40,7 @@
 	</style>
 </head>
 <body>
+	<div id="nav"><a href="config.html">config</a></div>
 	<div id="content" align="center">
 		<div id="buttons"></div>
 	</div>

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content = "height = device-height, width = 420, user-scalable = no" /> 
+	<title>* * GardenPi * *</title>
+	<script type="text/javascript" src="/webiopi.js"></script>
+	<script type="text/javascript">
+
+	function setConfig(duration){
+		webiopi().callMacro("setConfig", duration, null);
+	}
+
+	function createFieldSet(data){
+
+		var fieldset = document.createElement("fieldset");
+		// fieldset.setAttribute("name", key);
+		
+		for (var key in data) {
+			var label = document.createElement("label");
+			label.setAttribute("for", key);
+			label.innerHTML = key;
+			fieldset.appendChild(label);
+
+			var input = document.createElement("input");
+			input.setAttribute("name", key);
+			input.setAttribute("id", key);
+			input.setAttribute("value", data[key]);
+
+    		fieldset.appendChild(input);
+		}
+
+		return fieldset;
+	}
+
+	function createConfigForm(form, data){
+		var lcForm = document.createElement("form");
+
+		var dataDict = JSON.parse(data);
+		for (var key in dataDict) {
+			lcForm.appendChild(createFieldSet(dataDict[key]));
+		}
+
+		var saveButton = document.createElement("button");
+		saveButton.innerHTML = "Save";
+
+    	saveButton.onclick=function(){
+    		var data = [];
+    		var lcForm = document.getElementById('form');
+    		var fieldSets = lcForm.getElementsByTagName('fieldset');
+    		for (var fieldset in fieldSets){
+    			data[fieldset] = [];
+
+    			var inputs = fieldSets[fieldset].elements;
+				for (var input in inputs){
+					data[fieldset][input] = inputs[input];
+    			}
+    		}
+
+data['plop']="pilip";
+        	webiopi().callMacro('setConfig', JSON.stringify(data), "");
+
+        	return false;
+	    };
+	
+		
+		lcForm.appendChild(saveButton);
+
+		form.appendChild(lcForm);
+	}
+
+	webiopi().ready(function() {
+		// TODO read config
+		webiopi().callMacro("getConfig", null, function(macro, args, data){
+			createConfigForm(document.getElementById('form'), data);
+		})
+	});
+	</script>
+	<style type="text/css">
+		form {
+			display: block;
+			margin: 5px 5px 5px 5px;
+			width: 320px;
+		}
+
+		form > input {
+			/*margin: 5px 5px 5px 5px;*/
+			width: 600px;
+			/*height: 45px;*/
+		}
+
+	</style>
+</head>
+<body>
+
+	<div id="nav"><a href="dashboard.html">dashboard</a></div>
+	<div id="content" align="center">
+		<div id="form"></div>
+	</div>
+</body>
+</html>
