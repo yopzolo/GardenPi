@@ -24,4 +24,4 @@ This is an implementation of webiopi dedicated to indoor growing
 
 ![ligth On](screens/Capture d’écran 2013-04-19 à 02.00.50.png)
 ![ligth Off](screens/Capture d’écran 2013-04-19 à 02.01.07.png)
-![Config](screens/Capture d’écran 2013-04-23 à 10.31.08)
+![Config](screens/Capture d’écran 2013-04-23 à 10.31.08.png)
