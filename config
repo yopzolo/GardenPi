@@ -22,7 +22,7 @@
 # Load custom scripts syntax :
 # name = sourcefile
 #   each sourcefile may have setup, loop and destroy functions and macros
-lightScript = light.py
+lightScript = /usr/share/webiopi/htdocs/light.py
 
 #------------------------------------------------------------------------#
 
@@ -36,7 +36,7 @@ port = 80
 #passwd-file = /etc/webiopi/passwd
 
 # Use doc-root to change default HTML and resource files location
-doc-root = .
+doc-root = /usr/share/webiopi/htdocs/
 
 # Use welcome-file to change the default "Welcome" file
 welcome-file = index.html
