@@ -7,11 +7,13 @@
 	<script type="text/javascript" src="/webiopi.js"></script>
 	<script type="text/javascript">
 	webiopi().ready(function() {
-
-		$("#buttons").append(webiopi().createGPIOButton("23", "LIGHT"));
-		$("#buttons").append(webiopi().createMacroButton("config","config", "setConfig", "12,8"));
-
-		webiopi().refreshGPIO(true);
+		webiopi().callMacro("getButtons", null, function(macro, args, data){
+			var dataDict = JSON.parse(data);
+			for (var key in dataDict) {
+				$("#buttons").append(webiopi().createGPIOButton(dataDict[key], key));
+			}
+			webiopi().refreshGPIO(true);
+		});
 	});
 	</script>
 	<style type="text/css">
@@ -25,11 +27,11 @@
 			color: black;
 		}
 		.LOW {
-			background-color: red;
+			background-color: darkgray;
 		}
 		
 		.HIGH {
-			background-color: green;
+			background-color: blue;
 		}
 		#gpio23.LOW {
 			background-color: darkgray;

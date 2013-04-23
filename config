@@ -3,8 +3,8 @@
 # This is used during WebIOPi start process
 #21 = IN
 23 = OUT 0
-#24 = OUT 0
-#25 = OUT 1
+24 = OUT 0
+25 = OUT 0
 
 #------------------------------------------------------------------------#
 
@@ -13,8 +13,8 @@
 # This is used at the end of WebIOPi stop process
 #21 = IN
 23 = IN
-#24 = IN
-#25 = OUT 0
+24 = IN
+25 = IN
 
 #------------------------------------------------------------------------#
 
