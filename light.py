@@ -23,7 +23,7 @@ def destroy():
 
 @webiopi.macro
 def getButtons():
-    return json.dumps({'ligth' : 23, 'pump': 24, 'fan': 25})
+    return json.dumps({'18': 18, '22': 22,'ligth' : 23, 'pump': 24, 'fan': 25})
 
 @webiopi.macro
 def setConfig(ligth_start, ligth_duration, pump_cycle_day, pump_duration_day, pump_cycle_nigth, pump_duration_nigth, fan_trigger_temp_day, fan_trigger_temp_night):

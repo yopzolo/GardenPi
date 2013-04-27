@@ -1,17 +1,19 @@
 [GPIO]
 # Initialize following GPIOs with given function and optional value
 # This is used during WebIOPi start process
-#21 = IN
-23 = OUT 0
-24 = OUT 0
-25 = OUT 0
+18 = OUT 1
+22 = OUT 1
+23 = OUT 1
+24 = OUT 1
+25 = OUT 1
 
 #------------------------------------------------------------------------#
 
 [~GPIO]
 # Reset following GPIOs with given function and optional value
 # This is used at the end of WebIOPi stop process
-#21 = IN
+18 = IN
+22 = IN
 23 = IN
 24 = IN
 25 = IN
