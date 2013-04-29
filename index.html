@@ -7,6 +7,19 @@
 	<script type="text/javascript" src="/webiopi.js"></script>
 	<script type="text/javascript">
 	webiopi().ready(function() {
+		$.get("/devices/*", function(data) {
+			var content = $("#status");
+			for (i in data) {
+				if (data[i].type == "Humidity-Temperature") {
+					var device = new TempHumidity(data[i].name);
+					if (device) {
+						device.element = $("<div>");
+						content.append(device.element);
+						device.refreshUI();
+					}
+				}
+			}
+		});
 		webiopi().callMacro("getButtons", null, function(macro, args, data){
 			var dataDict = JSON.parse(data);
 			for (var key in dataDict) {
@@ -15,6 +28,68 @@
 			webiopi().refreshGPIO(true);
 		});
 	});
+
+
+	function TempHumidity(name) {
+		this.name = name;
+		this.url = "/devices/" + name + "/sensor";
+		this.refreshTime = 5000;
+	}
+
+	TempHumidity.prototype.toString = function() {
+		return "";
+	}
+
+	TempHumidity.prototype.getCelsius = function(callback) {
+		$.get(this.url + "/temperature/c", function(data) {
+			callback(this.name, data);
+		});
+	}
+
+	TempHumidity.prototype.getPercent = function(callback) {
+		$.get(this.url + "/humidity", function(data) {
+			callback(this.name, data);
+		});
+	}
+
+	TempHumidity.prototype.refreshUI = function() {
+		var temp = this;
+		var element = this.element;
+		if (element != undefined)
+			if (element.header1 == undefined) {
+				element.header1 = $("<h3>" + this + "</h3>");
+				element.append(element.header1);
+			}
+			if (element.header2 == undefined) {
+				element.header2 = $("<h3>" + this + "</h3>");
+				element.append(element.header2);
+			}
+		
+		this.refreshTemp();
+		this.refreshPercent();
+	}
+
+	TempHumidity.prototype.refreshTemp = function(){
+		var temp = this;
+		var element = this.element;
+		this.getCelsius(function(name, data){
+			if (element != undefined) {
+				element.header1.text(temp + "Temperature : " + data + "°C");
+			}
+			setTimeout(function(){temp.refreshTemp()}, temp.refreshTime);
+		});
+	}
+
+	TempHumidity.prototype.refreshPercent = function(){	
+		var temp = this;
+		var element = this.element;
+		this.getPercent(function(name, data){
+			if (element != undefined) {
+				element.header2.text(temp + "Humidity : " + data + "%");
+			}
+			setTimeout(function(){temp.refreshPercent()}, temp.refreshTime);
+		});
+	}
 	</script>
 	<style type="text/css">
 		button {
@@ -44,6 +119,7 @@
 <body>
 	<div id="nav"><a href="config.html">config</a></div>
 	<div id="content" align="center">
+		<div id="status"></div>
 		<div id="buttons"></div>
 	</div>
 </body>

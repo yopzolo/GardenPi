@@ -7,3 +7,5 @@ cp config $CONFIG_FILE
 cp config.html $HOME
 cp index.html $HOME
 cp light.py $HOME
+
+/./etc/init.d/webiopi restart
