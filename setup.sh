@@ -10,10 +10,10 @@ echo "downloading webiopi"
 wget http://webiopi.googlecode.com/files/WebIOPi-0.6.0.tar.gz
 tar xvzf WebIOPi-0.6.0.tar.gz
 
-echo "adding DHT11 to webiopi module"
-cp Adafruit_DHT $SENSOR_HOME
-cp dht11.py $SENSOR_HOME
-cp sensor_init.py $SENSOR_INIT
+echo "adding DHT to webiopi module"
+cp DHT_X/Adafruit_DHT /usr/bin/
+cp DHT_X/dht11.py $SENSOR_HOME
+cp DHT_X/sensor_init.py $SENSOR_INIT
 
 echo "installing webiopi"
 cd WebIOPi-0.6.0
@@ -27,3 +27,4 @@ cp index.html $HOME
 cp light.py $HOME
 
 /./etc/init.d/webiopi restart
+# sudo webiopi -c /etc/webiopi/config

@@ -33,39 +33,48 @@ import re
 
 from webiopi.devices.sensor import Temperature
 
-class DHT11(Humidity, Temperature):
+webiopi.setDebug()
+
+class DHT(Humidity, Temperature):
 
     gpioPort = 0
-    temperature = 25.0
-    humidity = 24.0
 
     def __family__(self):
         return "Humidity-Temperature"
 
     def __init__(self, gpio=0x00, name="DHT11"):
         gpioPort = gpio;
-        
-    def refreshValues(self):
-        output = subprocess.check_output(["./Adafruit_DHT", "11", "4"]);
-        matches = re.search("Temp =\s+([0-9.]+)", output)
-        global temperature
-        temperature = float(matches.group(1))
-        global humidity
-        matches = re.search("Hum =\s+([0-9.]+)", output)
-        humidity = float(matches.group(1))
 
     def __getKelvin__(self):
         return self.Celsius2Kelvin()
 
     def __getCelsius__(self):
-        return 25.0
-    
+        output = subprocess.check_output(["Adafruit_DHT", self.__type__(), "4"]);
+        if (len(output)>0):
+            return float(re.split(b";", output)[0])
+        else:
+            return 0.0
+
     def __getFahrenheit__(self):
         return self.Celsius2Fahrenheit()
 
 
     def __getHumidity__(self):
-        return 23.0
+        output = subprocess.check_output(["Adafruit_DHT", self.__type__(), "4"]);
+        if (len(output)>0):
+            return float(re.split(b";", output)[1])
+        else:
+            return 0.0
 
     def close(self):
         return 0
+
+class DHT11(DHT):
+
+    def __type__(self):
+        return "11"
+
+class DHT2302(DHT):
+
+    def __type__(self):
+        return "2302"
