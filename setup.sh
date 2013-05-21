@@ -24,7 +24,7 @@ echo "copying g4rdenP1 configuration"
 cp config $CONFIG_FILE
 cp config.html $HOME
 cp index.html $HOME
-cp light.py $HOME
+cp garden.py $HOME
 
 /./etc/init.d/webiopi restart
 # sudo webiopi -c /etc/webiopi/config
