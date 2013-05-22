@@ -25,7 +25,9 @@
 		webiopi().callMacro("getButtons", null, function(macro, args, data){
 			var dataDict = JSON.parse(data);
 			for (var key in dataDict) {
-				$("#"+key).append(webiopi().createGPIOButton(dataDict[key], key));
+				var button = webiopi().createGPIOButton(dataDict[key], key)
+				button.class = key;
+				$("#"+key).append(button);
 			}
 			webiopi().refreshGPIO(true);
 		});
@@ -49,15 +51,30 @@
 			font-size: 24pt;
 			font-weight: bold;
 			color: black;
+
+			background-position:top;
+			border-color: lightgray;
 		}
 		.LOW {
 			background-color: darkgray;
 		}
 		.HIGH {
-			background-color: blue;
+			background-color: green;
 		}
-		#gpio23.HIGH {
+
+		#gpio23.LOW {
+			background-image:url(light_of.png);
 			background-color: yellow;
+		}
+
+		#gpio23.HIGH {
+			background-image:url(light_on.png);
+			background-color: yellow;
+		}
+
+		#gpio24.HIGH {
+			background-image:url(pump_on.png);
+			background-color: lightblue;
 		}
 
 		#content {
