@@ -10,18 +10,21 @@ from config import PeriodicConfig, PeriodicRunner
 class SetRunnerMock(SetRunner):
     def __init__(self):
         self.config = 0
+        self.time = 0
+        self.state = 0
 
     def updateAtTime(self, config, state, time):
         self.config = config
+        self.state = state
+        self.time = time
 
-class ConfigTest(unittest.TestCase):
-
-    def setUp(self):
-        pass
+class ConfigRunnerTest(unittest.TestCase):
 
     def assertConfig(self, runner, date, state, expectedDay, config, expectedConfig):
         runner.updateAtTime(config, state, date)
         self.assertEqual(runner.runner.config, expectedConfig)
+        self.assertEqual(runner.runner.time, date)
+        self.assertEqual(runner.runner.state, state)
         self.assertEqual(state.day, expectedDay)        
  
     def test_configRoot(self):
@@ -46,10 +49,8 @@ class ConfigTest(unittest.TestCase):
         self.assertConfig(runner, datetime(1981,11,3,6,0,0), current, False, config, nightConfig)
         self.assertConfig(runner, datetime(1981,11,3,15,0,0), current, False, config, nightConfig)
         self.assertConfig(runner, datetime(1981,11,3,18,0,0), current, True, config, dayConfig)
-        
-    def test_configSet(self):
-        pass
 
+class PeriodicRunnerTest(unittest.TestCase):
     def test_period(self):
         config = PeriodicConfig()
 
@@ -69,8 +70,9 @@ class ConfigTest(unittest.TestCase):
 
         runner = PeriodicRunner()
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,0,0)), expected[0])
-        self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,0,0)), expected[0])
+        self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,5,0)), expected[5])
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,11,0)), expected[11])
+
 
 if __name__ == '__main__':
     unittest.main()
