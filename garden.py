@@ -4,17 +4,16 @@ import time
 import json
 
 from config import ConfigRoot, ConfigRunner, RegisterState
+from datetime import time
 
 webiopi.setDebug()
-GPIO = webiopi.GPIO
-
-duration = 1;
-
+GPIO    = webiopi.GPIO
 LIGHT   = 23
+PUMP    = 24
 
-config = ConfigRoot()
-runner = ConfigRunner()
-curent = RegisterState()
+config  = ConfigRoot()
+runner  = ConfigRunner()
+current = RegisterState()
 
 def setup():
     dayConfig = config.configSets[0]
@@ -33,20 +32,26 @@ def setup():
     
     webiopi.debug("Script with macros - Setup")
 
-def loop():
-    runner.update(config, global state)
+def updateGPIO(pin, newValue):
+    value = GPIO.digitalRead(pin)
+    if not value==newValue:
+        GPIO.digitalWrite(pin, newValue)
 
-    print state.__dict__
-    value = not GPIO.digitalRead(LIGHT)
-    GPIO.digitalWrite(LIGHT, value)
-    webiopi.sleep(duration)        
+def loop():
+    global current
+    runner.update(config, current)
+
+    webiopi.debug(current.__dict__)
+
+    updateGPIO(LIGHT, current.day)
+    updateGPIO(PUMP, current.pump)
 
 def destroy():
     webiopi.debug("Script with macros - Destroy")
 
 @webiopi.macro
 def getButtons():
-    return json.dumps({'18': 18, '22': 22,'ligth' : 23, 'pump': 24, 'fan': 25})
+    return json.dumps({'ligth' : LIGHT, 'pump': PUMP})
 
 @webiopi.macro
 def setConfig(ligth_start, ligth_duration, pump_cycle_day, pump_duration_day, pump_cycle_nigth, pump_duration_nigth, fan_trigger_temp_day, fan_trigger_temp_night):

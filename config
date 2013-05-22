@@ -1,22 +1,16 @@
 [GPIO]
 # Initialize following GPIOs with given function and optional value
 # This is used during WebIOPi start process
-18 = OUT 1
-22 = OUT 1
-23 = OUT 1
-24 = OUT 1
-25 = OUT 1
+23 = OUT 0 #LIGTH
+24 = OUT 0 #PUMP
 
 #------------------------------------------------------------------------#
 
 [~GPIO]
 # Reset following GPIOs with given function and optional value
 # This is used at the end of WebIOPi stop process
-18 = IN
-22 = IN
 23 = IN
 24 = IN
-25 = IN
 
 #------------------------------------------------------------------------#
 
@@ -105,10 +99,10 @@ dht11 = DHT2302 gpio:4
 [REST]
 # By default, REST API allows to GET/POST on all GPIOs
 # Use gpio-export to limit GPIO available through REST API  
-gpio-export = 18, 22, 23, 24, 25
+gpio-export = 23, 24
 
 # Uncomment to forbid changing GPIO values 
-gpio-post-value = true
+gpio-post-value = false
 
 # Uncomment to forbid changing GPIO functions 
 gpio-post-function = false 
