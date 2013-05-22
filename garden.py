@@ -4,7 +4,7 @@ import time
 import json
 
 from config import ConfigRoot, ConfigRunner, RegisterState
-from datetime import time
+from datetime import time, timedelta
 
 webiopi.setDebug()
 GPIO    = webiopi.GPIO
@@ -41,7 +41,7 @@ def loop():
     global current
     runner.update(config, current)
 
-    webiopi.debug(current.__dict__)
+    #webiopi.debug(current.__dict__)
 
     updateGPIO(LIGHT, current.day)
     updateGPIO(PUMP, current.pump)
