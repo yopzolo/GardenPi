@@ -33,10 +33,10 @@ class PeriodicRunner(object):
         self.lastOn = datetime(1970,1,1,0,0,0)
 
     def valueAtTime(self, periodicConfig, time):
-        if time >= self.lastOn + timedelta(minutes=periodicConfig.period):
+        if time >= self.lastOn + periodicConfig.period:
             self.lastOn = time
             return True
-        if time >= self.lastOn + timedelta(minutes=periodicConfig.duration):
+        if time >= self.lastOn + periodicConfig.duration:
             return False
             
         return True;
@@ -63,5 +63,5 @@ class ConfigSet(object):
 
 class PeriodicConfig(object):
     def __init__(self):
-        self.period = 0
-        self.duration = 0
+        self.period = timedelta()
+        self.duration = timedelta()

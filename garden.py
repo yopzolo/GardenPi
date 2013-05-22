@@ -20,15 +20,15 @@ def setup():
     dayConfig.startTime = time(17,0,0)
 
     pumpDayConfig = dayConfig.pumpPeriod
-    pumpDayConfig.period = 15
-    pumpDayConfig.duration = 5
+    pumpDayConfig.period = timedelta(minutes=15)
+    pumpDayConfig.duration = timedelta(minutes=5)
         
     nightConfig = config.configSets[1]
     nightConfig.startTime = time(5,0,0)
 
     pumpNigthConfig = nightConfig.pumpPeriod
-    pumpNigthConfig.period = 60
-    pumpNigthConfig.duration = 1
+    pumpNigthConfig.period = timedelta(hours=1)
+    pumpNigthConfig.duration = timedelta(minutes=1)
     
     webiopi.debug("Script with macros - Setup")
 

@@ -1,7 +1,7 @@
 import unittest
 import json
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 from config import ConfigRoot, ConfigRunner, RegisterState
 from config import ConfigSet, SetRunner
@@ -53,8 +53,8 @@ class ConfigTest(unittest.TestCase):
     def test_period(self):
         config = PeriodicConfig()
 
-        config.period = 3
-        config.duration = 1
+        config.period = timedelta(minutes = 3)
+        config.duration = timedelta(minutes = 1)
 
         runner = PeriodicRunner()
         for minNb in range(0, 59):
@@ -62,8 +62,8 @@ class ConfigTest(unittest.TestCase):
 
     def test_period_skipUpdates(self):
         config = PeriodicConfig()
-        config.period = 5
-        config.duration = 2
+        config.period = timedelta(minutes = 5)
+        config.duration = timedelta(minutes = 2)
 
         expected = [True, True, False, False, False, True, True, False, False, False, True, True, False, False, False, True, True]
 
