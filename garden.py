@@ -41,18 +41,20 @@ def loop():
     global current
     runner.update(config, current)
 
-    #webiopi.debug(current.__dict__)
+    # webiopi.debug(current.__dict__)
 
     updateGPIO(LIGHT, current.day)
     updateGPIO(PUMP, current.pump)
+    
+    webiopi.sleep(5)
 
 def destroy():
     webiopi.debug("Script with macros - Destroy")
 
 @webiopi.macro
 def getButtons():
-    return json.dumps({'ligth' : LIGHT, 'pump': PUMP})
-
+    return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : 21, 'brum' : 22})
+    
 @webiopi.macro
 def setConfig(ligth_start, ligth_duration, pump_cycle_day, pump_duration_day, pump_cycle_nigth, pump_duration_nigth, fan_trigger_temp_day, fan_trigger_temp_night):
     global duration;
