@@ -24,7 +24,7 @@
 # Load custom scripts syntax :
 # name = sourcefile
 #   each sourcefile may have setup, loop and destroy functions and macros
-lightScript = /usr/share/webiopi/htdocs/light.py
+mainScript = /usr/share/webiopi/htdocs/garden.py
 
 #------------------------------------------------------------------------#
 
