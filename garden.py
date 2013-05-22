@@ -3,6 +3,8 @@ import webiopi
 import time
 import json
 
+from config import ConfigRoot, ConfigRunner, RegisterState
+
 webiopi.setDebug()
 GPIO = webiopi.GPIO
 
@@ -10,10 +12,31 @@ duration = 1;
 
 LIGHT   = 23
 
+config = ConfigRoot()
+runner = ConfigRunner()
+curent = RegisterState()
+
 def setup():
+    dayConfig = config.configSets[0]
+    dayConfig.startTime = time(17,0,0)
+
+    pumpDayConfig = dayConfig.pumpPeriod
+    pumpDayConfig.period = 15
+    pumpDayConfig.duration = 5
+        
+    nightConfig = config.configSets[1]
+    nightConfig.startTime = time(5,0,0)
+
+    pumpNigthConfig = nightConfig.pumpPeriod
+    pumpNigthConfig.period = 60
+    pumpNigthConfig.duration = 1
+    
     webiopi.debug("Script with macros - Setup")
 
 def loop():
+    runner.update(config, global state)
+
+    print state.__dict__
     value = not GPIO.digitalRead(LIGHT)
     GPIO.digitalWrite(LIGHT, value)
     webiopi.sleep(duration)        

@@ -25,6 +25,7 @@ cp config $CONFIG_FILE
 cp config.html $HOME
 cp index.html $HOME
 cp garden.py $HOME
+cp config.py $HOME
 
 /./etc/init.d/webiopi restart
 # sudo webiopi -c /etc/webiopi/config
