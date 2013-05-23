@@ -3,7 +3,8 @@ import json
 
 from datetime import datetime, time, timedelta
 
-from config import ConfigRoot, ConfigRunner, RegisterState
+from config import RegisterState
+from config import ConfigRoot, ConfigRunner, RootEncoder
 from config import ConfigSet, SetRunner
 from config import PeriodicConfig, PeriodicRunner
 
@@ -73,6 +74,40 @@ class PeriodicRunnerTest(unittest.TestCase):
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,5,0)), expected[5])
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,11,0)), expected[11])
 
+class ConfigRootTest(unittest.TestCase):
+    def test_export(self):
+        config = ConfigRoot()
+
+        dayConfig = config.configSets[0]
+        dayConfig.startTime = time(5,0,0)
+        pumpConfig = dayConfig.pumpPeriod
+        pumpConfig.period = timedelta(minutes = 15)
+        pumpConfig.duration = timedelta(minutes = 5)
+        
+        nigthConfig = config.configSets[1]
+        nigthConfig.startTime = time(17,0,0)
+        pumpConfig = nigthConfig.pumpPeriod
+        pumpConfig.period = timedelta(minutes = 60)
+        pumpConfig.duration = timedelta(minutes = 1)
+
+        self.assertEqual(json.dumps(config, cls=RootEncoder), "[{\"start\": \"05:00:00\", \"pump\": {\"duration\": 300.0, \"period\": 900.0}}, {\"start\": \"17:00:00\", \"pump\": {\"duration\": 60.0, \"period\": 3600.0}}]")
+        print json.dumps(config, cls=RootEncoder, indent=4)
+class ConfigSetTest(unittest.TestCase):
+    def test_dump(self):
+        config = ConfigSet()
+        config.startTime = time(5,0,0)
+        config.pumpPeriod.period = timedelta(minutes = 15)
+        config.pumpPeriod.duration = timedelta(minutes = 5)
+
+        self.assertEqual(json.dumps(config.asDict()), "{\"start\": \"05:00:00\", \"pump\": {\"duration\": 300.0, \"period\": 900.0}}")
+
+class PeriodicConfigTest(unittest.TestCase):
+    def test_dump(self):
+        config = PeriodicConfig()
+        config.period = timedelta(minutes = 5)
+        config.duration = timedelta(minutes = 2)
+
+        self.assertEqual(json.dumps(config.asDict()), "{\"duration\": 120.0, \"period\": 300.0}")
 
 if __name__ == '__main__':
     unittest.main()

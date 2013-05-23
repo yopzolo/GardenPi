@@ -1,5 +1,5 @@
 from datetime import datetime, time, timedelta
-
+import json
 #
 # data updater
 #
@@ -40,8 +40,8 @@ class PeriodicRunner(object):
             return False
             
         return True;
-        
-#
+     
+
 # state storage
 #
 class RegisterState(object):
@@ -52,16 +52,30 @@ class RegisterState(object):
 #
 # data storage
 #
+
+class RootEncoder(json.JSONEncoder):
+    def default(self, obj):
+        return obj.asDict();
+
 class ConfigRoot(object):
     def __init__(self):
         self.configSets = [ConfigSet(), ConfigSet()]
+
+    def asDict(self):
+        return [self.configSets[0].asDict(),self.configSets[1].asDict()]
 
 class ConfigSet(object):
     def __init__(self):
         self.startTime = time.min
         self.pumpPeriod = PeriodicConfig()
 
+    def asDict(self):
+        return {'start':self.startTime.isoformat(),'pump':self.pumpPeriod.asDict()}
+
 class PeriodicConfig(object):
     def __init__(self):
         self.period = timedelta()
         self.duration = timedelta()
+
+    def asDict(self):
+        return {'period':self.period.total_seconds(),'duration':self.duration.total_seconds()}
