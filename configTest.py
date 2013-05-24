@@ -5,7 +5,7 @@ import string
 from datetime import datetime, time, timedelta
 
 from config import RegisterState
-from config import ConfigEncoder
+from config import ConfigEncoder, ConfigFile
 from config import RootConfig, ConfigRunner
 from config import DayConfig, DayRunner
 from config import UrneConfig, UrneRunner
@@ -108,6 +108,37 @@ class PeriodicRunnerTest(unittest.TestCase):
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,0,0)), expected[0])
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,5,0)), expected[5])
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,11,0)), expected[11])
+
+class ConfigFileTest(unittest.TestCase):
+    def test_pickle(self):
+        
+        config = DayConfig()
+
+        dayConfig = config.di
+        dayConfig.startTime = time(5,0,0)
+        pumpConfig = dayConfig.pumpPeriod
+        pumpConfig.period = timedelta(minutes = 15)
+        pumpConfig.duration = timedelta(minutes = 5)
+        
+        nigthConfig = config.noct
+        nigthConfig.startTime = time(17,0,0)
+        pumpConfig = nigthConfig.pumpPeriod
+        pumpConfig.period = timedelta(minutes = 60)
+        pumpConfig.duration = timedelta(minutes = 1)
+
+        saver = ConfigFile('configExportTest.pyc')
+        saver.save(config)
+
+        loader = ConfigFile('configExportTest.pyc')
+        loadedConfig = loader.load()
+
+        loadedDayConfig = loadedConfig.di
+        self.assertEqual(loadedDayConfig.startTime, time(5,0,0))
+        loadedPumpConfig = loadedDayConfig.pumpPeriod
+        self.assertEqual(loadedPumpConfig.period, timedelta(minutes = 15))
+        self.assertEqual(loadedPumpConfig.duration, timedelta(minutes = 5))
+        
+        print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 class DayConfigTest(unittest.TestCase):
     def test_export(self):

@@ -1,5 +1,6 @@
 from datetime import datetime, time, timedelta
 import json
+import pickle
 
 #
 # data updater
@@ -54,6 +55,25 @@ class PeriodicRunner(object):
         return True;
      
 
+# data codecs
+#
+
+class ConfigEncoder(json.JSONEncoder):
+    def default(self, obj):
+        return obj.asDict();
+
+class ConfigFile(object):
+    def __init__(self, filename):
+        self.filename = filename
+
+    def save(self, obj):
+        output = open(self.filename, 'wb')
+        pickle.dump(obj, output)
+
+    def load(self):
+        output = open(self.filename, 'r')
+        return pickle.load(output)
+
 # state storage
 #
 class RegisterState(object):
@@ -64,10 +84,6 @@ class RegisterState(object):
 #
 # data storage
 #
-
-class ConfigEncoder(json.JSONEncoder):
-    def default(self, obj):
-        return obj.asDict();
 
 class RootConfig(object):
     def __init__(self):
