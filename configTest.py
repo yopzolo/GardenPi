@@ -1,5 +1,6 @@
 import unittest
 import json
+import string
 
 from datetime import datetime, time, timedelta
 
@@ -92,6 +93,7 @@ class ConfigRootTest(unittest.TestCase):
 
         self.assertEqual(json.dumps(config, cls=RootEncoder), "[{\"start\": \"05:00:00\", \"pump\": {\"duration\": 300.0, \"period\": 900.0}}, {\"start\": \"17:00:00\", \"pump\": {\"duration\": 60.0, \"period\": 3600.0}}]")
         print json.dumps(config, cls=RootEncoder, indent=4)
+
 class ConfigSetTest(unittest.TestCase):
     def test_dump(self):
         config = ConfigSet()

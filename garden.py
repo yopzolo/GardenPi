@@ -2,8 +2,10 @@
 import webiopi
 import time
 import json
+import string
 
-from config import ConfigRoot, ConfigRunner, RegisterState
+from config import RegisterState
+from config import ConfigRoot, ConfigRunner, RootEncoder
 from datetime import time, timedelta
 
 webiopi.setDebug()
@@ -56,16 +58,28 @@ def getButtons():
     return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : 21, 'brum' : 22})
     
 @webiopi.macro
-def setConfig(ligth_start, ligth_duration, pump_cycle_day, pump_duration_day, pump_cycle_nigth, pump_duration_nigth, fan_trigger_temp_day, fan_trigger_temp_night):
-    global duration;
-    duration = int(ligth_duration);
+def setConfig(day_start, pump_duration_day, pump_period_day, night_start, pump_duration_night, pump_period_nigth):
+    global config
+    dayConfig = config.configSets[0]
+
+    timeValues = day_start.split(":")    
+    dayConfig.startTime = time(int(timeValues[0]), int(timeValues[1]), int(timeValues[2]))
+
+    pumpDayConfig = dayConfig.pumpPeriod
+    pumpDayConfig.period = timedelta(seconds=int(pump_period_day))
+    pumpDayConfig.duration = timedelta(seconds=int(pump_duration_day))
+        
+    nightConfig = config.configSets[1]
+
+    timeValues = night_start.split(":")    
+    nightConfig.startTime = time(int(timeValues[0]), int(timeValues[1]), int(timeValues[2]))
+
+    pumpNigthConfig = nightConfig.pumpPeriod
+    pumpNigthConfig.period = timedelta(seconds=int(pump_period_nigth))
+    pumpNigthConfig.duration = timedelta(seconds=int(pump_duration_night))
+
+    webiopi.debug(json.dumps(config, cls=RootEncoder))
 
 @webiopi.macro
 def getConfig():
-	configLigth = {'ligth_start': 10, 'ligth_duration': 8};
-	configPump = {'pump_cycle_day' : 30, 'pump_duration_day' : 30, 'pump_cycle_nigth' : 60, 'pump_duration_nigth' : 60}
-	configFan = {'fan_trigger_temp_day' : 27 , 'fan_trigger_temp_night': 21};
-
-	config = {'ligth' : configLigth, 'pump' : configPump, 'fan' : configFan};
-
-	return json.dumps(config);
+    return json.dumps(config, cls=RootEncoder)

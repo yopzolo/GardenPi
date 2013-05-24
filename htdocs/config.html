@@ -16,14 +16,18 @@
 		fieldset.appendChild(legend);
 
 		for (var key in data) {
-			var label = document.createElement("label");
-			label.setAttribute("for", key);
-			label.innerHTML = key;
-			fieldset.appendChild(label);
+			if (data[key].constructor == Object){
+				fieldset.appendChild(createFieldSet(data[key], key));				
+			}else{
+				var label = document.createElement("label");
+				label.setAttribute("for", key);
+				label.innerHTML = key;
+				fieldset.appendChild(label);
 
-			var input = document.createElement("input");
-			input.setAttribute("value", data[key]);
-    		fieldset.appendChild(input);
+				var input = document.createElement("input");
+				input.setAttribute("value", data[key]);
+    			fieldset.appendChild(input);
+    		}
 		}
 
 		return fieldset;
@@ -61,11 +65,23 @@
 	});
 	</script>
 	<style type="text/css">
+		body {
+			background-color: darkgrey;
+		}
+	
 		form {
 			/*margin: 5px 5px 5px 5px;*/
-			width: 340px;
+			width: 100%;
 		}
 
+		input {
+			width: 25%;
+		}
+
+		label {
+			width: 25%;	
+		}
+		
 		button {
 			margin: 5px 0;
     		border: 0;
