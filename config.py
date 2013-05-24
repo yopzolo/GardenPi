@@ -4,6 +4,17 @@ import json
 #
 # data updater
 #
+
+class ConfigRunner(object):
+    def __init__(self):
+        self.runner = DayRunner()
+
+    def update(self, config, state):
+        self.updateAtTime(config, state, datetime.now())
+
+    def updateAtTime(self, config, state, time):
+        self.runner.updateAtTime(config.activeConfig, state, time)
+
 class DayRunner(object):
 
     def __init__(self):
@@ -54,9 +65,17 @@ class RegisterState(object):
 # data storage
 #
 
-class DayEncoder(json.JSONEncoder):
+class ConfigEncoder(json.JSONEncoder):
     def default(self, obj):
         return obj.asDict();
+
+class RootConfig(object):
+    def __init__(self):
+        self.configs = [DayConfig()]
+        self.activeConfig = self.configs[0]
+    
+    def asDict(self):
+        return self.activeConfig.asDict()
 
 class DayConfig(object):
     def __init__(self):

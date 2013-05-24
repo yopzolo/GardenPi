@@ -5,7 +5,7 @@ import json
 import string
 
 from config import RegisterState
-from config import ConfigRoot, ConfigRunner, RootEncoder
+from config import ConfigRoot, ConfigRunner, ConfigEncoder
 from datetime import time, timedelta
 
 webiopi.setDebug()
@@ -18,21 +18,7 @@ runner  = ConfigRunner()
 current = RegisterState()
 
 def setup():
-    dayConfig = config.configSets[0]
-    dayConfig.startTime = time(17,0,0)
-
-    pumpDayConfig = dayConfig.pumpPeriod
-    pumpDayConfig.period = timedelta(minutes=15)
-    pumpDayConfig.duration = timedelta(minutes=5)
-        
-    nightConfig = config.configSets[1]
-    nightConfig.startTime = time(5,0,0)
-
-    pumpNigthConfig = nightConfig.pumpPeriod
-    pumpNigthConfig.period = timedelta(hours=1)
-    pumpNigthConfig.duration = timedelta(minutes=1)
-    
-    webiopi.debug("Script with macros - Setup")
+    pass
 
 def updateGPIO(pin, newValue):
     value = GPIO.digitalRead(pin)
@@ -60,7 +46,7 @@ def getButtons():
 @webiopi.macro
 def setConfig(day_start, pump_duration_day, pump_period_day, night_start, pump_duration_night, pump_period_nigth):
     global config
-    dayConfig = config.configSets[0]
+    dayConfig = config.activeConfig.di
 
     timeValues = day_start.split(":")    
     dayConfig.startTime = time(int(timeValues[0]), int(timeValues[1]), int(timeValues[2]))
@@ -69,7 +55,7 @@ def setConfig(day_start, pump_duration_day, pump_period_day, night_start, pump_d
     pumpDayConfig.period = timedelta(seconds=int(pump_period_day))
     pumpDayConfig.duration = timedelta(seconds=int(pump_duration_day))
         
-    nightConfig = config.configSets[1]
+    nightConfig = config.activeConfig.noct
 
     timeValues = night_start.split(":")    
     nightConfig.startTime = time(int(timeValues[0]), int(timeValues[1]), int(timeValues[2]))
@@ -78,7 +64,7 @@ def setConfig(day_start, pump_duration_day, pump_period_day, night_start, pump_d
     pumpNigthConfig.period = timedelta(seconds=int(pump_period_nigth))
     pumpNigthConfig.duration = timedelta(seconds=int(pump_duration_night))
 
-    webiopi.debug(json.dumps(config, cls=RootEncoder))
+    webiopi.debug(json.dumps(config, cls=ConfigEncoder))
 
 @webiopi.macro
 def getConfig():
