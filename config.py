@@ -4,25 +4,25 @@ import json
 #
 # data updater
 #
-class ConfigRunner(object):
+class DayRunner(object):
 
     def __init__(self):
-        self.runner = SetRunner()
+        self.runner = UrneRunner()
 
     def update(self, config, state):
         self.updateAtTime(config, state, datetime.now())
 
     def updateAtTime(self, config, state, time):
-        if time.time() > config.configSets[0].startTime or time.time() < config.configSets[1].startTime:
-            currentConfig = config.configSets[0]
+        if time.time() > config.di.startTime or time.time() < config.noct.startTime:
+            currentConfig = config.di
             state.day = True
         else:
-            currentConfig = config.configSets[1]
+            currentConfig = config.noct
             state.day = False;
 
         self.runner.updateAtTime(currentConfig, state, time)
 
-class SetRunner(object):
+class UrneRunner(object):
     def __init__(self):
         self.pumpRunner = PeriodicRunner()
 
@@ -54,18 +54,19 @@ class RegisterState(object):
 # data storage
 #
 
-class RootEncoder(json.JSONEncoder):
+class DayEncoder(json.JSONEncoder):
     def default(self, obj):
         return obj.asDict();
 
-class ConfigRoot(object):
+class DayConfig(object):
     def __init__(self):
-        self.configSets = [ConfigSet(), ConfigSet()]
+        self.di = UrneConfig();
+        self.noct = UrneConfig();
 
     def asDict(self):
-        return [self.configSets[0].asDict(),self.configSets[1].asDict()]
+        return {'day':self.di.asDict(),'night':self.noct.asDict()}
 
-class ConfigSet(object):
+class UrneConfig(object):
     def __init__(self):
         self.startTime = time.min
         self.pumpPeriod = PeriodicConfig()
