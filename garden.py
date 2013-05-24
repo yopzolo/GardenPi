@@ -5,7 +5,7 @@ import json
 import string
 
 from config import RegisterState
-from config import ConfigRoot, ConfigRunner, ConfigEncoder
+from config import RootConfig, ConfigRunner, ConfigEncoder
 from datetime import time, timedelta
 
 webiopi.setDebug()
@@ -13,7 +13,7 @@ GPIO    = webiopi.GPIO
 LIGHT   = 23
 PUMP    = 24
 
-config  = ConfigRoot()
+config  = RootConfig()
 runner  = ConfigRunner()
 current = RegisterState()
 
@@ -68,4 +68,4 @@ def setConfig(day_start, pump_duration_day, pump_period_day, night_start, pump_d
 
 @webiopi.macro
 def getConfig():
-    return json.dumps(config, cls=RootEncoder)
+    return json.dumps(config, cls=ConfigEncoder)
