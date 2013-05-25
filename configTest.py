@@ -30,61 +30,49 @@ class ConfigRunnerTest(unittest.TestCase):
         self.assertEqual(runner.runner.config, config.configs[1])
         self.assertEqual(runner.runner.time, testTime)
         self.assertEqual(runner.runner.state, current)
-        
+       
 class DayRunnerTest(unittest.TestCase):
+    def setUp(self):
+        self.config = DayConfig()
+        self.runner = DayRunner()
+        self.runner.runner = RunnerMock()
+        self.current = RegisterState()
 
-    def assertConfig(self, runner, date, state, expectedDay, config, expectedConfig):
-        runner.updateAtTime(config, state, date)
-        self.assertEqual(runner.runner.config, expectedConfig)
-        self.assertEqual(runner.runner.time, date)
-        self.assertEqual(runner.runner.state, state)
-        self.assertEqual(state.day, expectedDay)        
+    def assertConfig(self, date, expectedDay):
+        self.runner.updateAtTime(self.config, self.current, date)
+
+        # print '- {} {}'.format(date, "Day" if self.current.day else "Nigth")
+
+        self.assertEqual(self.runner.runner.config, self.config.di if expectedDay else self.config.noct)
+        self.assertEqual(self.runner.runner.time, date)
+        self.assertEqual(self.runner.runner.state, self.current)
+        self.assertEqual(self.current.day, expectedDay)        
  
-    def test_dayConfig(self):
-        config = DayConfig()
+    def runTest(self,expectedResult):
+        for day in range(1,10):
+            for hour in range(0,24):
+                self.assertConfig(datetime(2018,7,day,hour,0,1), expectedResult[hour])
 
-        dayConfig = config.di
-        dayConfig.startTime = time(17,0,0)
-        
-        nightConfig = config.noct
-        nightConfig.startTime = time(5,0,0)
+    def test_dayConfigNightIsDay(self):
+        self.config.di.startTime = time(17,0,0)
+        self.config.noct.startTime = time(5,0,0)
 
-        runner = DayRunner()
-        runner.runner = RunnerMock()
+        expected = [True,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,True,True,True,True,True,True,True]
+        self.runTest(expected)
 
-        current = RegisterState()
-        
-        self.assertConfig(runner, datetime(1981,11,2,13,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,2,16,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,2,17,1,0), current, True, config, dayConfig)
-        self.assertConfig(runner, datetime(1981,11,2,19,0,0), current, True, config, dayConfig)
-        self.assertConfig(runner, datetime(1981,11,3,1,0,0), current, True, config, dayConfig)
-        self.assertConfig(runner, datetime(1981,11,3,6,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,3,15,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,3,18,0,0), current, True, config, dayConfig)
+    def test_dayConfigDayIsDay(self):
+        self.config.di.startTime = time(5,0,0)
+        self.config.noct.startTime = time(17,0,0)
 
-    def test_dayConfig_weird(self):
-        config = DayConfig()
+        expected = [False,False,False,False,False,True,True,True,True,True,True,True,True,True,True,True,True,False,False,False,False,False,False,False]
+        self.runTest(expected)
 
-        dayConfig = config.di
-        dayConfig.startTime = time(11,0,0)
-        
-        nightConfig = config.noct
-        nightConfig.startTime = time(5,0,0)
+    def test_dayConfigDayIsMidnight(self):
+        self.config.di.startTime = time(0,0,0)
+        self.config.noct.startTime = time(12,0,0)
 
-        runner = DayRunner()
-        runner.runner = RunnerMock()
-
-        current = RegisterState()
-        
-        self.assertConfig(runner, datetime(1981,11,2,9,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,2,10,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,2,10,30,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,2,11,10,0), current, True, config, dayConfig)
-        self.assertConfig(runner, datetime(1981,11,3,2,0,0), current, True, config, dayConfig)
-        self.assertConfig(runner, datetime(1981,11,3,7,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,3,10,0,0), current, False, config, nightConfig)
-        self.assertConfig(runner, datetime(1981,11,3,18,0,0), current, True, config, dayConfig)
+        expected = [True,True,True,True,True,True,True,True,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False]
+        self.runTest(expected)
 
 class PeriodicRunnerTest(unittest.TestCase):
     def test_period(self):
@@ -138,7 +126,7 @@ class ConfigFileTest(unittest.TestCase):
         self.assertEqual(loadedPumpConfig.period, timedelta(minutes = 15))
         self.assertEqual(loadedPumpConfig.duration, timedelta(minutes = 5))
         
-        print json.dumps(config, cls=ConfigEncoder, indent=4)
+        # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 class DayConfigTest(unittest.TestCase):
     def test_export(self):
@@ -157,7 +145,7 @@ class DayConfigTest(unittest.TestCase):
         pumpConfig.duration = timedelta(minutes = 1)
 
         self.assertEqual(json.dumps(config.asDict()), "{\"day\": {\"start\": \"05:00:00\", \"pump\": {\"duration\": 300.0, \"period\": 900.0}}, \"night\": {\"start\": \"17:00:00\", \"pump\": {\"duration\": 60.0, \"period\": 3600.0}}}")
-        print json.dumps(config, cls=ConfigEncoder, indent=4)
+        # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 class UrneConfigTest(unittest.TestCase):
     def test_dump(self):
@@ -167,7 +155,7 @@ class UrneConfigTest(unittest.TestCase):
         config.pumpPeriod.duration = timedelta(minutes = 5)
 
         self.assertEqual(json.dumps(config.asDict()), "{\"start\": \"05:00:00\", \"pump\": {\"duration\": 300.0, \"period\": 900.0}}")
-        print json.dumps(config, cls=ConfigEncoder, indent=4)
+        # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 class PeriodicConfigTest(unittest.TestCase):
     def test_dump(self):
@@ -176,7 +164,7 @@ class PeriodicConfigTest(unittest.TestCase):
         config.duration = timedelta(minutes = 2)
 
         self.assertEqual(json.dumps(config.asDict()), "{\"duration\": 120.0, \"period\": 300.0}")
-        print json.dumps(config, cls=ConfigEncoder, indent=4)
+        # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 
 class RunnerMock(UrneRunner):

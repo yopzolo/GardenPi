@@ -25,12 +25,12 @@ class DayRunner(object):
         self.updateAtTime(config, state, datetime.now())
 
     def updateAtTime(self, config, state, time):
-        if time.time() > config.di.startTime or time.time() < config.noct.startTime:
-            currentConfig = config.di
-            state.day = True
+        if config.di.startTime > config.noct.startTime:
+            state.day = time.time() > config.di.startTime or time.time() < config.noct.startTime
         else:
-            currentConfig = config.noct
-            state.day = False;
+            state.day = time.time() > config.di.startTime and time.time() < config.noct.startTime
+
+        currentConfig = config.di if state.day else config.noct
 
         self.runner.updateAtTime(currentConfig, state, time)
 
