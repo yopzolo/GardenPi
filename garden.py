@@ -5,7 +5,7 @@ import json
 import string
 
 from config import RegisterState
-from config import RootConfig, ConfigRunner, ConfigEncoder
+from config import RootConfig, ConfigRunner, ConfigEncoder, ConfigFile
 from datetime import time, timedelta
 
 webiopi.setDebug()
@@ -13,12 +13,13 @@ GPIO    = webiopi.GPIO
 LIGHT   = 23
 PUMP    = 24
 
-config  = RootConfig()
+# config  = RootConfig()
 runner  = ConfigRunner()
 current = RegisterState()
 
 def setup():
-    pass
+    webiopi.debug("Loading config")
+    self.config = ConfigFile(GardenPyConfig.pyc).load()
 
 def updateGPIO(pin, newValue):
     value = GPIO.digitalRead(pin)
@@ -37,7 +38,9 @@ def loop():
     webiopi.sleep(5)
 
 def destroy():
-    webiopi.debug("Script with macros - Destroy")
+    webiopi.debug("Saving config")
+    ConfigFile(GardenPyConfig.pyc).save(self.config)
+    
 
 @webiopi.macro
 def getButtons():
