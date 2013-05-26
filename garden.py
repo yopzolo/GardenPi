@@ -13,13 +13,19 @@ GPIO    = webiopi.GPIO
 LIGHT   = 23
 PUMP    = 24
 
-# config  = RootConfig()
+config = False
+# = RootConfig()
 runner  = ConfigRunner()
 current = RegisterState()
 
 def setup():
     webiopi.debug("Loading config")
-    self.config = ConfigFile(GardenPyConfig.pyc).load()
+    global config
+    try:
+        config = ConfigFile('GardenPyConfig.pyc').load()
+    except (IOError, UnicodeDecodeError):
+        config = RootConfig()
+
 
 def updateGPIO(pin, newValue):
     value = GPIO.digitalRead(pin)
@@ -39,9 +45,8 @@ def loop():
 
 def destroy():
     webiopi.debug("Saving config")
-    ConfigFile(GardenPyConfig.pyc).save(self.config)
+    ConfigFile('GardenPyConfig.pyc').save(config)
     
-
 @webiopi.macro
 def getButtons():
     return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : 21, 'brum' : 22})

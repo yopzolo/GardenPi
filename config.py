@@ -67,12 +67,12 @@ class ConfigFile(object):
         self.filename = filename
 
     def save(self, obj):
-        output = open(self.filename, 'wb')
-        pickle.dump(obj, output)
+        with open(self.filename, "wb") as f:
+            pickle.dump(obj, f)
 
     def load(self):
-        output = open(self.filename, 'r')
-        return pickle.load(output)
+        with open(self.filename) as f:
+            return pickle.load(f)
 
 # state storage
 #

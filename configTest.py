@@ -43,7 +43,7 @@ class DayRunnerTest(unittest.TestCase):
 
         # print '- {} {}'.format(date, "Day" if self.current.day else "Nigth")
 
-        self.assertEqual(self.runner.runner.config, self.config.di if expectedDay else self.config.noct)
+        self.assertIs(self.runner.runner.config, self.config.di if expectedDay else self.config.noct)
         self.assertEqual(self.runner.runner.time, date)
         self.assertEqual(self.runner.runner.state, self.current)
         self.assertEqual(self.current.day, expectedDay)        
@@ -98,8 +98,15 @@ class PeriodicRunnerTest(unittest.TestCase):
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,11,0)), expected[11])
 
 class ConfigFileTest(unittest.TestCase):
+    def test_fileDontExists(self):
+        loader = ConfigFile('ConfigFileTest_test_fileDontExists.pyc')
+        try:
+            loadedConfig = loader.load()
+            self.fail()
+        except IOError:
+            pass
+
     def test_pickle(self):
-        
         config = DayConfig()
 
         dayConfig = config.di
@@ -114,10 +121,10 @@ class ConfigFileTest(unittest.TestCase):
         pumpConfig.period = timedelta(minutes = 60)
         pumpConfig.duration = timedelta(minutes = 1)
 
-        saver = ConfigFile('configExportTest.pyc')
+        saver = ConfigFile('ConfigFileTest_test_pickle.pyc')
         saver.save(config)
 
-        loader = ConfigFile('configExportTest.pyc')
+        loader = ConfigFile('ConfigFileTest_test_pickle.pyc')
         loadedConfig = loader.load()
 
         loadedDayConfig = loadedConfig.di
