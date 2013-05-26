@@ -24,7 +24,8 @@ This is an implementation of webiopi dedicated to indoor growing
 
 ## first screenshots
 
+![Icon](screens/Iphone_dash.png)
 ![ligth On](screens/Dashboard_ON.png)
-![ligth Off](screens/Dashboard_OFF.png)
 ![Config](screens/Settings.png)
-![Icon](htdocs/apple-touch-icon-iphone4.png)
+![ligth Off](screens/Dashboard_OFF.png)
+
