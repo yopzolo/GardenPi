@@ -8,7 +8,7 @@ from config import RegisterState
 from config import RootConfig, ConfigRunner, ConfigEncoder, ConfigFile
 from datetime import time, timedelta
 
-webiopi.setDebug()
+# webiopi.setDebug()
 GPIO    = webiopi.GPIO
 LIGHT   = 23
 PUMP    = 24
@@ -35,8 +35,6 @@ def updateGPIO(pin, newValue):
 def loop():
     global current
     runner.update(config, current)
-
-    # webiopi.debug(current.__dict__)
 
     updateGPIO(LIGHT, current.day)
     updateGPIO(PUMP, current.pump)
