@@ -71,7 +71,7 @@ class ConfigFile(object):
             pickle.dump(obj, f)
 
     def load(self):
-        with open(self.filename) as f:
+        with open(self.filename, "rb") as f:
             return pickle.load(f)
 
 # state storage
