@@ -222,7 +222,7 @@ class TriggerConfigTest(unittest.TestCase):
         config.mode = True;
         config.triggerValue = 25.0
 
-        self.assertEqual(json.dumps(config.asDict()), "{\"triggerValue\": 25.0, \"mode\": true}")
+        self.assertEqual(json.dumps(config.asDict()), "{\"mode\": true, \"value\": 25.0}")
 
 class RunnerMock(UrneRunner):
     def __init__(self):
