@@ -9,28 +9,26 @@ class ConfigRunner(object):
     def __init__(self):
         self.runner = DayRunner()
 
-    def update(self, config, state):
-        self.updateAtTime(config, state, datetime.now())
+    def UpdateTime(self, config, state):
+        state.time = datetime.now()
+        self.update(self, config, state)
 
-    def updateAtTime(self, config, state, time):
-        self.runner.updateAtTime(config.activeConfig, state, time)
+    def update(self, config, state):
+        self.runner.update(config.activeConfig, state)
 
 class DayRunner(object):
     def __init__(self):
         self.runner = UrneRunner()
 
     def update(self, config, state):
-        self.updateAtTime(config, state, datetime.now())
-
-    def updateAtTime(self, config, state, time):
         if config.di.startTime > config.noct.startTime:
-            state.day = time.time() > config.di.startTime or time.time() < config.noct.startTime
+            state.day = state.time.time() > config.di.startTime or state.time.time() < config.noct.startTime
         else:
-            state.day = time.time() > config.di.startTime and time.time() < config.noct.startTime
+            state.day = state.time.time() > config.di.startTime and state.time.time() < config.noct.startTime
 
         currentConfig = config.di if state.day else config.noct
 
-        self.runner.updateAtTime(currentConfig, state, time)
+        self.runner.update(currentConfig, state)
 
 class UrneRunner(object):
     def __init__(self):
@@ -38,8 +36,8 @@ class UrneRunner(object):
         self.fanRunner = TriggerRunner()
         self.brumRunner = TriggerRunner()
 
-    def updateAtTime(self, config, state, time):
-        state.pump = self.pumpRunner.valueAtTime(config.pumpPeriod, time)
+    def update(self, config, state):
+        state.pump = self.pumpRunner.valueAtTime(config.pumpPeriod, state.time)
         state.fan = self.fanRunner.valueWithValue(config.fanTrigger, state.temp)
         state.brum = self.brumRunner.valueWithValue(config.brumTrigger, state.humidity)
 
@@ -62,19 +60,13 @@ class TriggerRunner(object):
         self.isterezis = 0.5
 
     def valueWithValue(self, triggerConfig, value):
-        if triggerConfig.mode:
-            if self.previousValue:
-                result = not value<=triggerConfig.triggerValue-self.isterezis
-            else:
-                result = value>=triggerConfig.triggerValue+self.isterezis
+        if self.previousValue:
+            result = value>triggerConfig.triggerValue-self.isterezis
         else:
-            if not self.previousValue:
-                result = value<=triggerConfig.triggerValue-self.isterezis
-            else:
-                result = not value >=triggerConfig.triggerValue+self.isterezis
-
+            result = value>=triggerConfig.triggerValue+self.isterezis
         self.previousValue = result
-        return result
+
+        return result if triggerConfig.mode else not result
 
 #
 # data codecs
@@ -100,6 +92,8 @@ class ConfigFile(object):
 #
 class RegisterState(object):
     def __init__(self):
+        self.time = datetime.min
+
         self.temp = 0.0
         self.humidity = 0.0
 

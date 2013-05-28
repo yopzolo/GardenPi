@@ -44,7 +44,7 @@ def loop():
 
 #    webiopi.debug(current.temp)
 
-    runner.update(config, current)
+    runner.updateTime(config, current)
 
     updateGPIO(LIGHT, current.day)
     updateGPIO(PUMP, current.pump)

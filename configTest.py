@@ -20,16 +20,14 @@ class ConfigRunnerTest(unittest.TestCase):
         config.activeConfig = config.configs[1]
 
         current = RegisterState()
-
-        testTime = datetime.now()
+        current.time = datetime.now()
 
         runner = ConfigRunner()
         runner.runner = RunnerMock()
 
-        runner.updateAtTime(config, current, testTime)
+        runner.update(config, current)
         
         self.assertEqual(runner.runner.config, config.configs[1])
-        self.assertEqual(runner.runner.time, testTime)
         self.assertEqual(runner.runner.state, current)
        
 class DayRunnerTest(unittest.TestCase):
@@ -40,12 +38,12 @@ class DayRunnerTest(unittest.TestCase):
         self.current = RegisterState()
 
     def assertConfig(self, date, expectedDay):
-        self.runner.updateAtTime(self.config, self.current, date)
+        self.current.time = date
+        self.runner.update(self.config, self.current)
 
         # print '- {} {}'.format(date, "Day" if self.current.day else "Nigth")
 
         self.assertIs(self.runner.runner.config, self.config.di if expectedDay else self.config.noct)
-        self.assertEqual(self.runner.runner.time, date)
         self.assertEqual(self.runner.runner.state, self.current)
         self.assertEqual(self.current.day, expectedDay)        
  
@@ -230,10 +228,9 @@ class RunnerMock(UrneRunner):
         self.time = 0
         self.state = 0
 
-    def updateAtTime(self, config, state, time):
+    def update(self, config, state):
         self.config = config
         self.state = state
-        self.time = time
 
 if __name__ == '__main__':
     unittest.main()
