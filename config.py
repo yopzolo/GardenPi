@@ -9,9 +9,9 @@ class ConfigRunner(object):
     def __init__(self):
         self.runner = DayRunner()
 
-    def UpdateTime(self, config, state):
+    def updateTime(self, config, state):
         state.time = datetime.now()
-        self.update(self, config, state)
+        self.update(config, state)
 
     def update(self, config, state):
         self.runner.update(config.activeConfig, state)
