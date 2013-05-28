@@ -8,11 +8,11 @@ from config import RegisterState
 from config import RootConfig, ConfigRunner, ConfigEncoder, ConfigFile
 from datetime import time, timedelta
 
-webiopi.setDebug()
+# webiopi.setDebug()
 GPIO    = webiopi.GPIO
 LIGHT   = 23
 PUMP    = 24
-FAN     = 21
+FAN     = 25
 BRUM    = 22
 
 config = False
@@ -21,12 +21,11 @@ runner  = ConfigRunner()
 current = RegisterState()
 
 def setup():
-    # webiopi.debug("Loading config")
+    webiopi.debug("Loading config")
     global config
     try:
         config = ConfigFile('GardenPyConfig.pyc').load()
     except (IOError, UnicodeDecodeError):
-        webiopi.debug("an error occured")
         config = RootConfig()
 
 
@@ -43,7 +42,7 @@ def loop():
     current.temp = dht11.getCelsius()
     current.humidity = dht11.getHumidity()
 
-    webiopi.debug(current.temp)
+#    webiopi.debug(current.temp)
 
     runner.update(config, current)
 
@@ -52,7 +51,7 @@ def loop():
     updateGPIO(FAN, current.fan)
     updateGPIO(BRUM, current.brum)
     
-    webiopi.sleep(10)
+    webiopi.sleep(5)
 
 def destroy():
     webiopi.debug("Saving config")
@@ -102,7 +101,7 @@ def setConfig(day_start, pump_duration_day, pump_period_day, fan_mode_value_day,
     brumNightConfig.triggerValue = float(brum_trigger_value_nigth)
     brumNightConfig.mode = isTrue(brum_mode_value_nigth)
     
-    webiopi.debug(json.dumps(config, cls=ConfigEncoder))
+ #   webiopi.debug(json.dumps(config, cls=ConfigEncoder))
 
 @webiopi.macro
 def getConfig():

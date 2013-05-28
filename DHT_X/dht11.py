@@ -32,39 +32,55 @@ import subprocess
 import re
 
 from webiopi.devices.sensor import Temperature
-
-webiopi.setDebug()
+from datetime import datetime, time, timedelta
 
 class DHT(Humidity, Temperature):
-
-    gpioPort = 0
-
     def __family__(self):
         return "Humidity-Temperature"
 
     def __init__(self, gpio=0x00, name="DHT11"):
-        gpioPort = gpio;
+        self.gpioPort = gpio;
+
+        self.refreshPeriod = timedelta(seconds=15)
+        self.refreshing = False
+        self.lastRefresh = datetime.min
+
+        self.lastTemp = 0.0        
+        self.lastHumidity = 0.0
+
+        self.collectData()
+
+    def collectData(self):
+        webiopi.debug('Adafruit_DHT collecting fresh Data')
+        if not self.refreshing:
+            self.refreshing = True;
+
+            output = subprocess.check_output(["Adafruit_DHT", self.__type__(), self.gpioPort]);
+            if (len(output)>0):
+                values = re.split(b";", output)
+                self.lastTemp = float(values[0])
+                self.lastHumidity = float(values[1])
+
+            self.lastRefresh = datetime.now()
+            self.refreshing = False
 
     def __getKelvin__(self):
         return self.Celsius2Kelvin()
 
     def __getCelsius__(self):
-        output = subprocess.check_output(["Adafruit_DHT", self.__type__(), "4"]);
-        if (len(output)>0):
-            return float(re.split(b";", output)[0])
-        else:
-            return 0.0
+        if datetime.now() >= self.lastRefresh + self.refreshPeriod:
+            self.collectData()
+
+        return self.lastTemp
 
     def __getFahrenheit__(self):
         return self.Celsius2Fahrenheit()
 
-
     def __getHumidity__(self):
-        output = subprocess.check_output(["Adafruit_DHT", self.__type__(), "4"]);
-        if (len(output)>0):
-            return float(re.split(b";", output)[1])
-        else:
-            return 0.0
+        if datetime.now() >= self.lastRefresh + self.refreshPeriod:
+            self.collectData()
+
+        return self.lastHumidity
 
     def close(self):
         return 0

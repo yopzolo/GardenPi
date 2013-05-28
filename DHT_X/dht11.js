@@ -2,7 +2,7 @@
 	function TempHumidity(name) {
 		this.name = name;
 		this.url = "/devices/" + name + "/sensor";
-		this.refreshTime = 15000;
+		this.refreshTime = 1000;
 	}
 
 	TempHumidity.prototype.toString = function() {
