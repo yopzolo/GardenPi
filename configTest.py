@@ -10,6 +10,7 @@ from config import RootConfig, ConfigRunner
 from config import DayConfig, DayRunner
 from config import UrneConfig, UrneRunner
 from config import PeriodicConfig, PeriodicRunner
+from config import TriggerConfig, TriggerRunner
 
 class ConfigRunnerTest(unittest.TestCase):
 
@@ -97,6 +98,45 @@ class PeriodicRunnerTest(unittest.TestCase):
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,5,0)), expected[5])
         self.assertEqual(runner.valueAtTime(config, datetime(1981,11,2,17,11,0)), expected[11])
 
+class TriggerRunnerTest(unittest.TestCase):
+    def test_triggerSup(self):
+        config = TriggerConfig()
+        config.mode = True # value > trigger
+        config.triggerValue = 15.0
+
+        runner = TriggerRunner()
+        runner.isterezis = 1
+        self.assertEqual(runner.valueWithValue(config, 12.0), False)
+        self.assertEqual(runner.valueWithValue(config, 13.0), False)
+        self.assertEqual(runner.valueWithValue(config, 14.0), False)
+        self.assertEqual(runner.valueWithValue(config, 15.0), False)
+        self.assertEqual(runner.valueWithValue(config, 16.0), True)
+        self.assertEqual(runner.valueWithValue(config, 15.5), True)
+        self.assertEqual(runner.valueWithValue(config, 15.0), True)
+        self.assertEqual(runner.valueWithValue(config, 15.0), True)
+        self.assertEqual(runner.valueWithValue(config, 14.0), False)
+        self.assertEqual(runner.valueWithValue(config, 14.0), False)
+        self.assertEqual(runner.valueWithValue(config, 15.5), False)
+        
+    def test_triggerInf(self):
+        config = TriggerConfig()
+        config.mode = False # value < trigger
+        config.triggerValue = 45.0
+
+        runner = TriggerRunner()
+        runner.isterezis = 1
+        self.assertEqual(runner.valueWithValue(config, 40.0), True)
+        self.assertEqual(runner.valueWithValue(config, 44.0), True)
+        self.assertEqual(runner.valueWithValue(config, 45.0), True)
+        self.assertEqual(runner.valueWithValue(config, 46.0), False)
+        self.assertEqual(runner.valueWithValue(config, 45.0), False)
+        self.assertEqual(runner.valueWithValue(config, 44.5), False)
+        self.assertEqual(runner.valueWithValue(config, 44.0), True)
+        self.assertEqual(runner.valueWithValue(config, 44.5), True)
+        self.assertEqual(runner.valueWithValue(config, 45.0), True)
+        self.assertEqual(runner.valueWithValue(config, 45.5), True)
+        self.assertEqual(runner.valueWithValue(config, 46.5), False)
+
 class ConfigFileTest(unittest.TestCase):
     def test_fileDontExists(self):
         loader = ConfigFile('ConfigFileTest_test_fileDontExists.pyc')
@@ -124,8 +164,12 @@ class ConfigFileTest(unittest.TestCase):
         saver = ConfigFile('ConfigFileTest_test_pickle.pyc')
         saver.save(config)
 
+        # TODO assert file exists
+
         loader = ConfigFile('ConfigFileTest_test_pickle.pyc')
         loadedConfig = loader.load()
+
+        # TODO remove file
 
         loadedDayConfig = loadedConfig.di
         self.assertEqual(loadedDayConfig.startTime, time(5,0,0))
@@ -135,33 +179,33 @@ class ConfigFileTest(unittest.TestCase):
         
         # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
+class ConfigDictMock(object):
+    def __init__(self, name):
+        self.name = name
+
+    def asDict(self):
+        return self.name;
+
 class DayConfigTest(unittest.TestCase):
     def test_export(self):
         config = DayConfig()
+        config.di = ConfigDictMock('the day config')
+        config.noct = ConfigDictMock('the night config')
 
-        dayConfig = config.di
-        dayConfig.startTime = time(5,0,0)
-        pumpConfig = dayConfig.pumpPeriod
-        pumpConfig.period = timedelta(minutes = 15)
-        pumpConfig.duration = timedelta(minutes = 5)
-        
-        nigthConfig = config.noct
-        nigthConfig.startTime = time(17,0,0)
-        pumpConfig = nigthConfig.pumpPeriod
-        pumpConfig.period = timedelta(minutes = 60)
-        pumpConfig.duration = timedelta(minutes = 1)
-
-        self.assertEqual(json.dumps(config.asDict()), "{\"day\": {\"start\": \"05:00:00\", \"pump\": {\"duration\": 300.0, \"period\": 900.0}}, \"night\": {\"start\": \"17:00:00\", \"pump\": {\"duration\": 60.0, \"period\": 3600.0}}}")
+        self.assertEqual(json.dumps(config.asDict()), "{\"day\": \"the day config\", \"night\": \"the night config\"}")
         # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 class UrneConfigTest(unittest.TestCase):
     def test_dump(self):
         config = UrneConfig()
         config.startTime = time(5,0,0)
-        config.pumpPeriod.period = timedelta(minutes = 15)
-        config.pumpPeriod.duration = timedelta(minutes = 5)
+        config.pumpPeriod = ConfigDictMock('the pump')
+        config.fanTrigger = ConfigDictMock('the fan')
+        config.brumTrigger = ConfigDictMock('the brum')
+        # config.pumpPeriod.period = timedelta(minutes = 15)
+        # config.pumpPeriod.duration = timedelta(minutes = 5)
 
-        self.assertEqual(json.dumps(config.asDict()), "{\"start\": \"05:00:00\", \"pump\": {\"duration\": 300.0, \"period\": 900.0}}")
+        self.assertEqual(json.dumps(config.asDict()), "{\"start\": \"05:00:00\", \"pump\": \"the pump\", \"fan\": \"the fan\", \"brum\": \"the brum\"}")
         # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 class PeriodicConfigTest(unittest.TestCase):
@@ -172,7 +216,13 @@ class PeriodicConfigTest(unittest.TestCase):
 
         self.assertEqual(json.dumps(config.asDict()), "{\"duration\": 120.0, \"period\": 300.0}")
         # print json.dumps(config, cls=ConfigEncoder, indent=4)
+class TriggerConfigTest(unittest.TestCase):
+    def test_dump(self):
+        config = TriggerConfig()
+        config.mode = True;
+        config.triggerValue = 25.0
 
+        self.assertEqual(json.dumps(config.asDict()), "{\"triggerValue\": 25.0, \"mode\": true}")
 
 class RunnerMock(UrneRunner):
     def __init__(self):

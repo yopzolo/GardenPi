@@ -5,7 +5,6 @@ import pickle
 #
 # data updater
 #
-
 class ConfigRunner(object):
     def __init__(self):
         self.runner = DayRunner()
@@ -17,7 +16,6 @@ class ConfigRunner(object):
         self.runner.updateAtTime(config.activeConfig, state, time)
 
 class DayRunner(object):
-
     def __init__(self):
         self.runner = UrneRunner()
 
@@ -37,9 +35,13 @@ class DayRunner(object):
 class UrneRunner(object):
     def __init__(self):
         self.pumpRunner = PeriodicRunner()
+        self.fanRunner = TriggerRunner()
+        self.brumRunner = TriggerRunner()
 
     def updateAtTime(self, config, state, time):
         state.pump = self.pumpRunner.valueAtTime(config.pumpPeriod, time)
+        state.fan = self.fanRunner.valueWithValue(config.fanTrigger, state.temp)
+        state.brum = self.brumRunner.valueWithValue(config.brumTrigger, state.humidity)
 
 class PeriodicRunner(object):
     def __init__(self):
@@ -54,7 +56,27 @@ class PeriodicRunner(object):
             
         return True;
      
+class TriggerRunner(object):
+    def __init__(self):
+        self.previousValue = False
+        self.isterezis = 0.5
 
+    def valueWithValue(self, triggerConfig, value):
+        if triggerConfig.mode:
+            if self.previousValue:
+                result = not value<=triggerConfig.triggerValue-self.isterezis
+            else:
+                result = value>=triggerConfig.triggerValue+self.isterezis
+        else:
+            if not self.previousValue:
+                result = value<=triggerConfig.triggerValue-self.isterezis
+            else:
+                result = not value >=triggerConfig.triggerValue+self.isterezis
+
+        self.previousValue = result
+        return result
+
+#
 # data codecs
 #
 
@@ -78,8 +100,13 @@ class ConfigFile(object):
 #
 class RegisterState(object):
     def __init__(self):
+        self.temp = 0.0
+        self.humidity = 0.0
+
         self.day = False
         self.pump = False
+        self.fan = False
+        self.brum = False
 
 #
 # data storage
@@ -105,9 +132,11 @@ class UrneConfig(object):
     def __init__(self):
         self.startTime = time.min
         self.pumpPeriod = PeriodicConfig()
+        self.fanTrigger = TriggerConfig()
+        self.brumTrigger = TriggerConfig()
 
     def asDict(self):
-        return {'start':self.startTime.isoformat(),'pump':self.pumpPeriod.asDict()}
+        return {'start':self.startTime.isoformat(),'pump':self.pumpPeriod.asDict(), 'fan':self.fanTrigger.asDict(), 'brum':self.brumTrigger.asDict()}
 
 class PeriodicConfig(object):
     def __init__(self):
@@ -116,3 +145,11 @@ class PeriodicConfig(object):
 
     def asDict(self):
         return {'period':self.period.total_seconds(),'duration':self.duration.total_seconds()}
+
+class TriggerConfig(object):
+    def __init__(self):
+        self.mode = True # True = Sup
+        self.triggerValue = 0.0
+
+    def asDict(self):
+        return {'mode':self.mode,'value':self.triggerValue}

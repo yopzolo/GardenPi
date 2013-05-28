@@ -3,6 +3,8 @@
 # This is used during WebIOPi start process
 23 = OUT 0 #LIGTH
 24 = OUT 0 #PUMP
+21 = OUT 0 #FAN
+22 = OUT 0 #BRUMI
 
 #------------------------------------------------------------------------#
 
@@ -11,6 +13,8 @@
 # This is used at the end of WebIOPi stop process
 23 = IN
 24 = IN
+21 = IN
+22 = IN
 
 #------------------------------------------------------------------------#
 
@@ -99,7 +103,7 @@ dht11 = DHT2302 gpio:4
 [REST]
 # By default, REST API allows to GET/POST on all GPIOs
 # Use gpio-export to limit GPIO available through REST API  
-gpio-export = 23, 24
+gpio-export = 23, 24, 22, 21
 
 # Uncomment to forbid changing GPIO values 
 gpio-post-value = false
