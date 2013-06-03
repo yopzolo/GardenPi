@@ -1,22 +1,5 @@
 #!/bin/sh
 
-#     Copyright 2013 paul blin
-
-# This file is part of GardenPi.
-
-#     GardenPi is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-
-#     GardenPi is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-
-#     You should have received a copy of the GNU General Public License
-#     along with GardenPi.  If not, see <http://www.gnu.org/licenses/>.
-    
 CONFIG_FILE=/etc/webiopi/config
 HOME=/usr/share/webiopi/htdocs/
 
@@ -53,4 +36,5 @@ cp htdocs/* $HOME
 cp garden.py $HOME
 cp config.py $HOME
 
+sudo update-rc.d webiopi defaults
 /./etc/init.d/webiopi restart
