@@ -21,7 +21,7 @@ import time
 import json
 import string
 
-from config import RegisterState
+from config import RegisterState, RegisterStateLogger
 from config import RootConfig, ConfigRunner, ConfigEncoder, ConfigFile
 from datetime import time, timedelta
 
@@ -36,6 +36,7 @@ config = False
 # = RootConfig()
 runner  = ConfigRunner()
 current = RegisterState()
+logger = RegisterStateLogger('./GardenPy_Logs.txt', timedelta(minutes=5))
 
 def setup():
     webiopi.debug("Loading config")
@@ -68,6 +69,8 @@ def loop():
     updateGPIO(FAN, current.fan)
     updateGPIO(BRUM, current.brum)
     
+    logger.log(current)
+
     webiopi.sleep(5)
 
 def destroy():

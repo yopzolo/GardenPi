@@ -119,6 +119,30 @@ class RegisterState(object):
         self.fan = False
         self.brum = False
 
+class RegisterStateLogger(object):
+    def __init__(self, filename, period):
+        self.filename = filename
+        self.period = period
+        self.lastLog = datetime(1970,1,1,0,0,0)
+
+    def log(self, state):
+        if state.time >= self.lastLog + self.period:
+            self.lastLog = state.time
+            with open(self.filename, "a") as logFile:
+                logFile.write(state.time.isoformat())
+                logFile.write(",")
+                logFile.write(str(state.temp))
+                logFile.write(",")
+                logFile.write(str(state.humidity))
+                logFile.write(",")
+                logFile.write(str(state.day))
+                logFile.write(",")
+                logFile.write(str(state.pump))
+                logFile.write(",")
+                logFile.write(str(state.fan))
+                logFile.write(",")
+                logFile.write(str(state.brum))
+                logFile.write("\n")
 #
 # data storage
 #
