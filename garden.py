@@ -27,10 +27,15 @@ from datetime import time, timedelta
 
 # webiopi.setDebug()
 GPIO    = webiopi.GPIO
+
 LIGHT   = 23
 PUMP    = 24
+
 FAN     = 25
+FANHIGH = 18
+
 BRUM    = 22
+BRUMFAN = 21
 
 config = False
 # = RootConfig()
@@ -48,8 +53,8 @@ def setup():
 
 def updateGPIO(pin, newValue):
     value = GPIO.digitalRead(pin)
-    if not value==newValue:
-        GPIO.digitalWrite(pin, newValue)
+    if value==newValue:
+        GPIO.digitalWrite(pin, not newValue)
 
 def loop():
     global current
@@ -65,8 +70,12 @@ def loop():
 
     updateGPIO(LIGHT, current.day)
     updateGPIO(PUMP, current.pump)
+
     updateGPIO(FAN, current.fan)
+    updateGPIO(FANHIGH, current.fanHigh)
+
     updateGPIO(BRUM, current.brum)
+    updateGPIO(BRUMFAN, current.brumFan)
     
     webiopi.sleep(5)
 
@@ -76,13 +85,13 @@ def destroy():
     
 @webiopi.macro
 def getButtons():
-    return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : FAN, 'brum' : BRUM})
+    return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : FAN, 'fan' : FANHIGH, 'brum' : BRUMFAN})
     
 def isTrue(strValue):
     return strValue in ['true', '1', 't', 'y', 'yes']
 
 @webiopi.macro
-def setConfig(day_start, pump_duration_day, pump_period_day, fan_mode_value_day, fan_trigger_value_day, brum_mode_value_day, brum_trigger_value_day, night_start, pump_duration_night, pump_period_nigth, fan_mode_value_nigth, fan_trigger_value_nigth, brum_mode_value_nigth, brum_trigger_value_nigth):
+def setConfig(day_start, pump_duration_day, pump_period_day,  brum_mode_value_day, brum_trigger_value_day, fan_mode_value_day, fan_trigger_value_day, fan_high_mode_value_day, fan_high_trigger_value_day, night_start, pump_duration_night, pump_period_nigth, brum_mode_value_nigth, brum_trigger_value_nigth, fan_mode_value_nigth, fan_trigger_value_nigth, fan_high_mode_value_nigth, fan_high_trigger_value_nigth):
     global config
     dayConfig = config.activeConfig.di
 
@@ -96,6 +105,10 @@ def setConfig(day_start, pump_duration_day, pump_period_day, fan_mode_value_day,
     fanDayConfig = dayConfig.fanTrigger
     fanDayConfig.triggerValue = float(fan_trigger_value_day)
     fanDayConfig.mode = isTrue(fan_mode_value_day)
+
+    fanHighDayConfig = dayConfig.fanHighTrigger
+    fanHighDayConfig.triggerValue = float(fan_high_trigger_value_day)
+    fanHighDayConfig.mode = isTrue(fan_high_mode_value_day)
 
     brumDayConfig = dayConfig.brumTrigger
     brumDayConfig.triggerValue = float(brum_trigger_value_day)
@@ -113,6 +126,10 @@ def setConfig(day_start, pump_duration_day, pump_period_day, fan_mode_value_day,
     fanNightConfig = nightConfig.fanTrigger
     fanNightConfig.triggerValue = float(fan_trigger_value_nigth)
     fanNightConfig.mode = isTrue(fan_mode_value_nigth)
+
+    fanHighNigthConfig = nightConfig.fanHighTrigger
+    fanHighNigthConfig.triggerValue = float(fan_high_trigger_value_nigth)
+    fanHighNigthConfig.mode = isTrue(fan_high_mode_value_nigth)
 
     brumNightConfig = nightConfig.brumTrigger
     brumNightConfig.triggerValue = float(brum_trigger_value_nigth)

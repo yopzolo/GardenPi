@@ -51,12 +51,16 @@ class UrneRunner(object):
     def __init__(self):
         self.pumpRunner = PeriodicRunner()
         self.fanRunner = TriggerRunner()
+        self.fanHighRunner = TriggerRunner()
         self.brumRunner = TriggerRunner()
+        self.brumFanRunner = DelayRunner(timedelta(seconds = 1))
 
     def update(self, config, state):
         state.pump = self.pumpRunner.valueAtTime(config.pumpPeriod, state.time)
         state.fan = self.fanRunner.valueWithValue(config.fanTrigger, state.temp)
+        state.fanHigh = self.fanHighRunner.valueWithValue(config.fanHighTrigger, state.temp)
         state.brum = self.brumRunner.valueWithValue(config.brumTrigger, state.humidity)
+        state.brumFan = self.brumFanRunner.valueWithValueAtTime(state.brum, state.time)
 
 class PeriodicRunner(object):
     def __init__(self):
@@ -84,6 +88,23 @@ class TriggerRunner(object):
         self.previousValue = result
 
         return result if triggerConfig.mode else not result
+
+class DelayRunner(object):
+    def __init__(self, delay):
+        self.delay = delay
+        self.lastValue = False
+        self.lastChange = datetime(1970,1,1,0,0,0)
+
+    def valueWithValueAtTime(self, value, time):
+        if self.lastValue != value:
+            if value:
+                self.lastChange = time    
+            self.lastValue = value
+
+        if time > self.lastChange + self.delay:
+            return value
+
+        return False
 
 #
 # data codecs
@@ -116,8 +137,11 @@ class RegisterState(object):
 
         self.day = False
         self.pump = False
+
         self.fan = False
+        self.fanHigh = False
         self.brum = False
+        self.brumFan = False
 
 #
 # data storage
@@ -144,10 +168,11 @@ class UrneConfig(object):
         self.startTime = time.min
         self.pumpPeriod = PeriodicConfig()
         self.fanTrigger = TriggerConfig()
+        self.fanHighTrigger = TriggerConfig()
         self.brumTrigger = TriggerConfig()
 
     def asDict(self):
-        return {'start':self.startTime.isoformat(),'pump':self.pumpPeriod.asDict(), 'fan':self.fanTrigger.asDict(), 'brum':self.brumTrigger.asDict()}
+        return {'start':self.startTime.isoformat(),'pump':self.pumpPeriod.asDict(), 'fan':self.fanTrigger.asDict(), 'fan_high':self.fanHighTrigger.asDict(), 'brum':self.brumTrigger.asDict()}
 
 class PeriodicConfig(object):
     def __init__(self):
