@@ -60,22 +60,22 @@
 			border-color: lightgray;
 		}
 		.LOW {
-			background-color: darkgray;
+			background-color: green;
 		}
 		.HIGH {
-			background-color: green;
+			background-color: darkgray;
 		}
 
 		#gpio23.LOW {
-			background-image:url(light_of.png);
-		}
-
-		#gpio23.HIGH {
 			background-image:url(light_on.png);
 			background-color: yellow;
 		}
 
-		#gpio24.HIGH {
+		#gpio23.HIGH {
+			background-image:url(light_of.png);
+		}
+
+		#gpio24.LOW {
 			background-image:url(pump_on.png);
 			background-color: lightblue;
 		}
@@ -87,7 +87,7 @@
 		#content div
 		{
 			float: left;
-			width: 50%;
+			width: 33%;
 			height: 150px;
 
 			background-color: lightgrey;
@@ -119,6 +119,7 @@
 	<div id="content" align="center">
 		<div class="top left" id="ligth"></div>
 		<div class="top right" id="fan"></div>
+		<div class="top right" id="fan_high"></div>
 		<div class="middle" id="status"></div>
 		<div class="bottom left" id="brum"></div>
 		<div class="bottom right" id="pump"></div>

@@ -85,7 +85,7 @@ def destroy():
     
 @webiopi.macro
 def getButtons():
-    return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : FAN, 'fan' : FANHIGH, 'brum' : BRUMFAN})
+    return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : FAN, 'fan_high' : FANHIGH, 'brum' : BRUMFAN})
     
 def isTrue(strValue):
     return strValue in ['true', '1', 't', 'y', 'yes']
