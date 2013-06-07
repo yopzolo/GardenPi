@@ -305,8 +305,8 @@ class RegisterStateLoggerTest(unittest.TestCase):
 
         os.remove("RegisterStateLoggerTest_test_log.txt")
 
-        self.assertEqual(actual1, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False\n")
-        self.assertEqual(actual2, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False\n1981-11-02T12:16:35,25.5,54.0,False,False,True,True\n")
+        self.assertEqual(actual1, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False,False\n")
+        self.assertEqual(actual2, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False,False\n1981-11-02T12:16:35,25.5,54.0,False,False,True,False,True\n")
 
         #TODO creer un fichier et valider qu'on append correctement
 

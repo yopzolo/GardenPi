@@ -165,6 +165,8 @@ class RegisterStateLogger(object):
                 logFile.write(",")
                 logFile.write(str(state.fan))
                 logFile.write(",")
+                logFile.write(str(state.fanHigh))
+                logFile.write(",")
                 logFile.write(str(state.brum))
                 logFile.write("\n")
 #
