@@ -18,10 +18,10 @@
 import unittest
 import json
 import string
-
+import os
 from datetime import datetime, time, timedelta
 
-from config import RegisterState
+from config import RegisterState,RegisterStateLogger
 from config import ConfigEncoder, ConfigFile
 from config import RootConfig, ConfigRunner
 from config import DayConfig, DayRunner
@@ -200,7 +200,7 @@ class ConfigFileTest(unittest.TestCase):
         loader = ConfigFile('ConfigFileTest_test_pickle.pyc')
         loadedConfig = loader.load()
 
-        # TODO remove file
+        os.unlink('ConfigFileTest_test_pickle.pyc')
 
         loadedDayConfig = loadedConfig.di
         self.assertEqual(loadedDayConfig.startTime, time(5,0,0))
@@ -255,6 +255,60 @@ class TriggerConfigTest(unittest.TestCase):
         config.triggerValue = 25.0
 
         self.assertEqual(json.dumps(config.asDict()), "{\"mode\": true, \"value\": 25.0}")
+
+class RegisterStateLoggerTest(unittest.TestCase):
+    def test_log(self):
+        state = RegisterState()
+        state.time = datetime(1981, 11, 2, 12, 15, 58)
+        state.temp = 26.0
+        state.humidity = 55.0
+        state.day = True
+        state.pump = True
+        state.fan = False
+        state.brum = False
+
+        logger = RegisterStateLogger('RegisterStateLoggerTest_test_log.txt', timedelta(seconds = 30))
+        logger.log(state)
+
+        state.time = datetime(1981, 11 ,2 , 12 ,16, 00)
+        logger.log(state)
+
+        actual1 = ""
+        with open('RegisterStateLoggerTest_test_log.txt') as logFile:
+            actual1 = logFile.read()
+
+        state.temp = 25.5
+        state.humidity = 54.0
+        state.day = False
+        state.pump = False
+        state.fan = True
+        state.brum = True
+
+        state.time = datetime(1981, 11, 2, 12, 16, 05)
+        logger.log(state)
+        
+        state.time = datetime(1981, 11, 2, 12, 16, 15)
+        logger.log(state)
+        
+        state.time = datetime(1981, 11, 2, 12, 16, 25)
+        logger.log(state)
+
+        state.time = datetime(1981, 11, 2, 12, 16, 35)
+        logger.log(state)
+
+        state.time = datetime(1981, 11, 2, 12, 16, 45)
+        logger.log(state)
+
+        actual2 = ""
+        with open('RegisterStateLoggerTest_test_log.txt') as logFile:
+           actual2 = logFile.read()
+
+        os.remove("RegisterStateLoggerTest_test_log.txt")
+
+        self.assertEqual(actual1, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False\n")
+        self.assertEqual(actual2, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False\n1981-11-02T12:16:35,25.5,54.0,False,False,True,True\n")
+
+        #TODO creer un fichier et valider qu'on append correctement
 
 class RunnerMock(UrneRunner):
     def __init__(self):
