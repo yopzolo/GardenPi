@@ -13,12 +13,12 @@
 [~GPIO]
 # Reset following GPIOs with given function and optional value
 # This is used at the end of WebIOPi stop process
-23 = IN
-24 = IN
-25 = IN
-18 = IN
-22 = IN
-21 = IN
+23 = OUT 1
+24 = OUT 1
+25 = OUT 1
+18 = OUT 1
+22 = OUT 1
+27 = OUT 1
 
 #------------------------------------------------------------------------#
 
@@ -71,7 +71,8 @@ multicast = true
 # And also disable getty on ttyAMA0 in /etc/inittab
 #serial0 = Serial device:ttyAMA0 baudrate:9600
 
-dht11 = DHT2302 gpio:4
+dht11 = DHT11 gpio:4 #hardware polo
+# dht11 = DHT2302 gpio:4 #hardware seb
 
 #------------------------------------------------------------------------#
 
@@ -98,20 +99,12 @@ device-mapping = true
 #   destination : Resulting URL
 # Adding routes allows to simplify access with Human comprehensive URLs
 
-# In the next example with have the bedroom light connected to GPIO 25
-# and a temperature sensor named temp2, defined in [DEVICES] section
-#  - GET  /bedroom/light       => GET  /GPIO/25/value, returns the light state
-#  - POST /bedroom/light/0     => POST /GPIO/25/value/0, turn off the light
-#  - POST /bedroom/light/1	   => POST /GPIO/25/value/1, turn on the light
-#  - GET  /bedroom/temperature => GET  /devices/temp2/temperature/c, returns the temperature in celsius
-#/bedroom/light = /GPIO/25/value
-#/bedroom/temperature = /devices/temp2/temperature/c
+# /light = /GPIO/23/value
+# /pump = /GPIO/24/value
+# /fan = /GPIO/25/value
+# /fanhigh = /GPIO/18/value
+# /brumi = /GPIO/22/value
+# /brumifan = /GPIO/27/value
+# /temp = /devices/dht11/temperature/c
+# /humidity = /devices/dht11/humidity
 
-#/livingroom/light = /devices/expander0/0
-#/livingroom/brightness = /devices/adc/0/float
-#/livingroom/temperature = /devices/temp0/temperature/c
-
-#/weather/temperature = /devices/bmp/temperature/c
-#/weather/pressure = /devices/bmp/pressure/hpa
-
-/light = /gpio/23/value
