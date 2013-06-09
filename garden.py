@@ -35,7 +35,7 @@ FAN     = 25
 FANHIGH = 18
 
 BRUM    = 22
-BRUMFAN = 21
+BRUMFAN = 27
 
 config = False
 # = RootConfig()

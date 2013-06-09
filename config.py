@@ -53,7 +53,7 @@ class UrneRunner(object):
         self.fanRunner = TriggerRunner()
         self.fanHighRunner = TriggerRunner()
         self.brumRunner = TriggerRunner()
-        self.brumFanRunner = DelayRunner(timedelta(seconds = 1))
+        self.brumFanRunner = DelayRunner(timedelta(seconds = 30))
 
     def update(self, config, state):
         state.pump = self.pumpRunner.valueAtTime(config.pumpPeriod, state.time)
