@@ -162,12 +162,9 @@ class DelayRunnerTest(unittest.TestCase):
         self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,1,30)), False)
         self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,02,01)), False)
         self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,03,00)), True)
-        self.assertEqual(runner.valueWithValueAtTime(False, datetime(1981,11,2,17,04,01)), False)
-        self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,05,00)), False)
-        self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,05,59)), False)
-        self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,06,30)), True)
-        self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,19,06,30)), True)
-
+        self.assertEqual(runner.valueWithValueAtTime(False, datetime(1981,11,2,17,04,01)), True)
+        self.assertEqual(runner.valueWithValueAtTime(False, datetime(1981,11,2,17,05,02)), False)
+        
 class ConfigFileTest(unittest.TestCase):
     def test_fileDontExists(self):
         loader = ConfigFile('ConfigFileTest_test_fileDontExists.pyc')

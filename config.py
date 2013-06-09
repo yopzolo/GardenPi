@@ -97,14 +97,13 @@ class DelayRunner(object):
 
     def valueWithValueAtTime(self, value, time):
         if self.lastValue != value:
-            if value:
-                self.lastChange = time    
+            self.lastChange = time    
             self.lastValue = value
 
         if time > self.lastChange + self.delay:
             return value
 
-        return False
+        return not value
 
 #
 # data codecs
