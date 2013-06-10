@@ -71,8 +71,8 @@ multicast = true
 # And also disable getty on ttyAMA0 in /etc/inittab
 #serial0 = Serial device:ttyAMA0 baudrate:9600
 
-dht11 = DHT11 gpio:4 #hardware polo
-# dht11 = DHT2302 gpio:4 #hardware seb
+dht11 = DHT11 gpio:4
+# dht11 = DHT2302 gpio:4
 
 #------------------------------------------------------------------------#
 
