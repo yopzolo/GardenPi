@@ -28,6 +28,7 @@ from config import DayConfig, DayRunner
 from config import UrneConfig, UrneRunner
 from config import PeriodicConfig, PeriodicRunner
 from config import TriggerConfig, TriggerRunner
+from config import DelayRunner
 
 class ConfigRunnerTest(unittest.TestCase):
 
@@ -152,6 +153,18 @@ class TriggerRunnerTest(unittest.TestCase):
         self.assertEqual(runner.valueWithValue(config, 45.5), True)
         self.assertEqual(runner.valueWithValue(config, 46.5), False)
 
+class DelayRunnerTest(unittest.TestCase):
+    def test_delay(self):
+        runner = DelayRunner(timedelta(minutes = 1));
+
+        self.assertEqual(runner.valueWithValueAtTime(False, datetime(1981,11,2,17,0,0)), False)
+        self.assertEqual(runner.valueWithValueAtTime(False, datetime(1981,11,2,17,1,0)), False)
+        self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,1,30)), False)
+        self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,02,01)), False)
+        self.assertEqual(runner.valueWithValueAtTime(True, datetime(1981,11,2,17,03,00)), True)
+        self.assertEqual(runner.valueWithValueAtTime(False, datetime(1981,11,2,17,04,01)), True)
+        self.assertEqual(runner.valueWithValueAtTime(False, datetime(1981,11,2,17,05,02)), False)
+        
 class ConfigFileTest(unittest.TestCase):
     def test_fileDontExists(self):
         loader = ConfigFile('ConfigFileTest_test_fileDontExists.pyc')
@@ -216,11 +229,12 @@ class UrneConfigTest(unittest.TestCase):
         config.startTime = time(5,0,0)
         config.pumpPeriod = ConfigDictMock('the pump')
         config.fanTrigger = ConfigDictMock('the fan')
+        config.fanHighTrigger = ConfigDictMock('the fan High speed')
         config.brumTrigger = ConfigDictMock('the brum')
         # config.pumpPeriod.period = timedelta(minutes = 15)
         # config.pumpPeriod.duration = timedelta(minutes = 5)
 
-        self.assertEqual(json.dumps(config.asDict()), "{\"start\": \"05:00:00\", \"pump\": \"the pump\", \"fan\": \"the fan\", \"brum\": \"the brum\"}")
+        self.assertEqual(json.dumps(config.asDict()), "{\"start\": \"05:00:00\", \"pump\": \"the pump\", \"brum\": \"the brum\", \"fan\": \"the fan\", \"fan_high\": \"the fan High speed\"}")
         # print json.dumps(config, cls=ConfigEncoder, indent=4)
 
 class PeriodicConfigTest(unittest.TestCase):
@@ -288,8 +302,8 @@ class RegisterStateLoggerTest(unittest.TestCase):
 
         os.remove("RegisterStateLoggerTest_test_log.txt")
 
-        self.assertEqual(actual1, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False\n")
-        self.assertEqual(actual2, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False\n1981-11-02T12:16:35,25.5,54.0,False,False,True,True\n")
+        self.assertEqual(actual1, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False,False\n")
+        self.assertEqual(actual2, "1981-11-02T12:15:58,26.0,55.0,True,True,False,False,False\n1981-11-02T12:16:35,25.5,54.0,False,False,True,False,True\n")
 
         #TODO creer un fichier et valider qu'on append correctement
 

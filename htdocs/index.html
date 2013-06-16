@@ -5,6 +5,8 @@
 	<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-ipad.png" />
 	<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-iphone4.png" />
 
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content = "height = device-height, width = 420, user-scalable = no" /> 
 	<title>* * GardenPi * *</title>
@@ -60,22 +62,22 @@
 			border-color: lightgray;
 		}
 		.LOW {
-			background-color: darkgray;
+			background-color: green;
 		}
 		.HIGH {
-			background-color: green;
+			background-color: darkgray;
 		}
 
 		#gpio23.LOW {
-			background-image:url(light_of.png);
-		}
-
-		#gpio23.HIGH {
 			background-image:url(light_on.png);
 			background-color: yellow;
 		}
 
-		#gpio24.HIGH {
+		#gpio23.HIGH {
+			background-image:url(light_of.png);
+		}
+
+		#gpio24.LOW {
 			background-image:url(pump_on.png);
 			background-color: lightblue;
 		}
@@ -87,7 +89,7 @@
 		#content div
 		{
 			float: left;
-			width: 50%;
+			width: 33%;
 			height: 150px;
 
 			background-color: lightgrey;
@@ -118,6 +120,7 @@
 	<div id="content" align="center">
 		<div class="top left" id="ligth"></div>
 		<div class="top right" id="fan"></div>
+		<div class="top right" id="fan_high"></div>
 		<div class="middle" id="status"></div>
 		<div class="bottom left" id="brum"></div>
 		<div class="bottom right" id="pump"></div>

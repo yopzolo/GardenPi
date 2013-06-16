@@ -40,5 +40,5 @@ cp htdocs/* $HOME
 cp garden.py $HOME
 cp config.py $HOME
 
-sudo update-rc.d webiopi defaults
+update-rc.d webiopi defaults
 /./etc/init.d/webiopi restart
