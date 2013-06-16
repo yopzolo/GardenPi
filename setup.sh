@@ -27,6 +27,10 @@ cd WebIOPi-0.6.0
 ./setup.sh
 cd ..
 
+echo "Downloading flot"
+wget https://github.com/flot/flot/archive/master.zip
+unzip master.zip htdocs/
+
 echo "Copying g4rdenP1 configuration"
 cp config $CONFIG_FILE
 
