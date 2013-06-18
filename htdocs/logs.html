@@ -18,7 +18,6 @@
 
 
 	$(function() {
-			console.log('plop')
     	$.ajax({
         	url:"GardenPy_Logs.txt",
         	context:document.body
@@ -33,51 +32,60 @@
 			var d6 = [];
 			var d7 = [];
 
-			var i = 0;
+			var startDay, previousValue;
 			dataArray.forEach (function(line){
-				i+=1;
 			// console.log(line)
 			var theTime = new Date(line[0]);
-				d1.push([theTime, line[1]<50?line[1]:0]); //temp
-				d2.push([theTime, line[2]<50?line[2]:0]); //humidité
-				if (line[3]=='True') d3.push([theTime, 34]);
-				if (line[4]=='True') d4.push([theTime, 33]);
-				if (line[5]=='True') d5.push([theTime, 32]);
-				if (line[6]=='True') d6.push([theTime, 31]);
-				if (line[7]=='True') d7.push([theTime, 30]);
-				// d3.push([i, Math.sin(i)]);
 
+				var currentValue = line[3];
+				if (previousValue != currentValue){
+					if (currentValue =='True')
+						startDay = theTime;
+					else if (currentValue == 'False')
+						d1.push({ xaxis: { from: startDay, to: theTime } });
+
+				}
+
+				d2.push([theTime, line[1]<50?line[1]:0]); //temp
+				d3.push([theTime, line[2]<50?line[2]:0]); //humidité
+
+				if (line[4]=='True') d4.push([theTime, 20]); //Arrosage
+				if (line[5]=='True') d5.push([theTime, 32]); //Extraction
+				if (line[6]=='True') d6.push([theTime, 31]); // ' ' High
+				if (line[7]=='True') d7.push([theTime, 30]); // Humidification
 			});
 		
 		$.plot("#placeholder",  [{
-			data: d1,
-			lines: { show: true }
-		}, {
 			data: d2,
-			lines: { show: true }
+			lines: { show: true },
+			label: "Température"
 		}, {
 			data: d3,
-			points: { show: true }
-		}, {
+			lines: { show: true },
+			label:"Humidité"
+		}
+		, {
 			data: d4,
-			points: { show: true }
+			points: { show: true },
+			label:"Arrosage"
 		}, {
 			data: d5,
-			points: { show: true }
+			points: { show: true },
+			label:"Extraction"
 		}, {
 			data: d6,
-			points: { show: true }
+			points: { show: true },
+			label:"Extraction High"
 		}, {
 			data: d7,
-			points: { show: true }
+			points: { show: true },
+			label:"Humidification"
 		}], {
-					xaxis: { mode: "time" }
+			grid: {   markings:  d1},
+			xaxis: { mode: "time" }
 		});
 				console.log('done')
     	});
-
-
-
 	});
 
 	function parseCSV(str) {
