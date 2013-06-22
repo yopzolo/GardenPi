@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 CONFIG_FILE=/etc/webiopi/config
 HOME=/usr/share/webiopi/htdocs/
 
