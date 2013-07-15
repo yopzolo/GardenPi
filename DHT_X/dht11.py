@@ -60,6 +60,7 @@ class DHT(Humidity, Temperature):
                 values = re.split(b";", output)
                 newTemp = float(values[0])
                 newHumidity = float(values[1])
+
                 if ((self.lastTemp==0.0 or newTemp<2*self.lastTemp) and (self.lastHumidity==0.0 or newHumidity<2*self.lastHumidity)):
                     self.lastTemp = newTemp
                     self.lastHumidity = newHumidity
