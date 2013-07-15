@@ -58,8 +58,11 @@ class DHT(Humidity, Temperature):
             output = subprocess.check_output(["Adafruit_DHT", self.__type__(), self.gpioPort]);
             if (len(output)>0):
                 values = re.split(b";", output)
-                self.lastTemp = float(values[0])
-                self.lastHumidity = float(values[1])
+                newTemp = float(values[0])
+                newHumidity = float(values[1])
+                if ((self.lastTemp==0.0 or newTemp<2*self.lastTemp) and (self.lastHumidity==0.0 or newHumidity<2*self.lastHumidity)):
+                    self.lastTemp = newTemp
+                    self.lastHumidity = newHumidity
 
             self.lastRefresh = datetime.now()
             self.refreshing = False
