@@ -28,14 +28,24 @@ cd WebIOPi-0.6.0
 ./setup.sh
 cd ..
 
+rm -rf WebIOPi-0.6.0 WebIOPi-0.6.0.tar.gz
+
+echo "Downloading flot"
+wget https://github.com/flot/flot/archive/master.zip
+unzip master.zip -d htdocs
+
+rm master.zip
+
 echo "Copying g4rdenP1 configuration"
 cp config $CONFIG_FILE
 
 cp DHT_X/dht11.js $HOME
-cp htdocs/* $HOME
+cp -r htdocs/* $HOME
 
 cp garden.py $HOME
 cp config.py $HOME
 
 update-rc.d webiopi defaults
 /./etc/init.d/webiopi restart
+
+rm -rf htdocs/flot-master

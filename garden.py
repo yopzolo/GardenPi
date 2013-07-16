@@ -91,7 +91,7 @@ def getButtons():
     return json.dumps({'ligth' : LIGHT, 'pump': PUMP, 'fan' : FAN, 'fan_high' : FANHIGH, 'brum' : BRUM})
     
 def isTrue(strValue):
-    return strValue in ['true', '1', 't', 'y', 'yes']
+    return strValue in ['true', 'True', '1', 't', 'T', 'Y', 'y', 'yes', 'YES']
 
 @webiopi.macro
 def setConfig(day_start, pump_duration_day, pump_period_day,  brum_mode_value_day, brum_trigger_value_day, fan_mode_value_day, fan_trigger_value_day, fan_high_mode_value_day, fan_high_trigger_value_day, night_start, pump_duration_night, pump_period_nigth, brum_mode_value_nigth, brum_trigger_value_nigth, fan_mode_value_nigth, fan_trigger_value_nigth, fan_high_mode_value_nigth, fan_high_trigger_value_nigth):

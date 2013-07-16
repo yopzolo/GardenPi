@@ -22,10 +22,10 @@ This is an implementation of webiopi dedicated to indoor growing
 
 ---
 
-## first screenshots
+## Screenshots
 
 ![Icon](screens/Iphone_dash.png)
-![ligth On](screens/Dashboard_ON.png)
+![Dashboard](screens/Dashboard.png)
 ![Config](screens/Settings.png)
-![ligth Off](screens/Dashboard_OFF.png)
+![logs](screens/Logs.png)
 
