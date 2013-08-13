@@ -30,19 +30,23 @@
 			var d6 = [];
 			var d7 = [];
 
-			var startDay, previousValue;
+			var startDay = new Date(0);
+			var previousValue = 'False';
+
 			dataArray.forEach (function(line){
 			// console.log(line)
-			var theTime = new Date(line[0]);
-
+				var theTime = new Date(line[0]);
 				var currentValue = line[3];
+
 				if (previousValue != currentValue){
 					if (currentValue =='True')
 						startDay = theTime;
-					else if (currentValue == 'False')
+					else if (currentValue == 'False'){
 						d1.push({ xaxis: { from: startDay, to: theTime } });
-
+					}
 				}
+
+				previousValue = currentValue;
 
 				d2.push([theTime, line[1]<50?line[1]:0]); //temp
 				d3.push([theTime, line[2]<50?line[2]:0]); //humidité
@@ -82,7 +86,7 @@
 
 		var options = {
 			grid: {   markings:  d1},
-			xaxis: { mode: "time" },
+			xaxis: { mode: "time", localTimezone: true },
 			selection: { mode: "x" }
 		};
 
