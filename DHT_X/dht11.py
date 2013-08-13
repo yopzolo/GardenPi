@@ -45,10 +45,15 @@ class DHT(Humidity, Temperature):
         self.refreshing = False
         self.lastRefresh = datetime.min
 
-        self.lastTemp = 0.0        
-        self.lastHumidity = 0.0
+        self.lastTemp = -1.0        
+        self.lastHumidity = -1.0
 
         self.collectData()
+
+    def filterNewValue(self, oldValue, newValue):
+        if (oldValue==-1 or newValue<3*oldValue and 3*newValue>oldValue):
+            return newValue
+        return oldValue
 
     def collectData(self):
         webiopi.debug('Adafruit_DHT collecting fresh Data')
@@ -58,14 +63,11 @@ class DHT(Humidity, Temperature):
             output = subprocess.check_output(["Adafruit_DHT", self.__type__(), self.gpioPort]);
             if (len(output)>0):
                 values = re.split(b";", output)
-                newTemp = float(values[0])
-                newHumidity = float(values[1])
 
-                if ((self.lastTemp==0.0 or newTemp<2*self.lastTemp) and (self.lastHumidity==0.0 or newHumidity<2*self.lastHumidity)):
-                    self.lastTemp = newTemp
-                    self.lastHumidity = newHumidity
+                self.lastTemp = self.filterNewValue(self.lastTemp, float(values[0]))
+                self.lastHumidity = self.filterNewValue(self.lastHumidity, float(values[1]))
 
-            self.lastRefresh = datetime.now()
+                self.lastRefresh = datetime.now()
             self.refreshing = False
 
     def __getKelvin__(self):
