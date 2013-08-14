@@ -36,6 +36,9 @@
 			dataArray.forEach (function(line){
 			// console.log(line)
 				var theTime = new Date(line[0]);
+				// console.log(line[0].replace('T', ' ')+' GMT-0200');
+				// console.log(theTime);
+
 				var currentValue = line[3];
 
 				if (previousValue != currentValue){
