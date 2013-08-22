@@ -60,10 +60,10 @@ def updateGPIO(pin, newValue):
 def loop():
     global current
 
-    dht11 = webiopi.deviceInstance("dht11")
+    temp = webiopi.deviceInstance("temp1")
 
-    current.temp = dht11.getCelsius()
-    current.humidity = dht11.getHumidity()
+    current.temp = temp.getCelsius()
+    current.humidity = temp.getHumidity()
 
 #    webiopi.debug(current.temp)
 
