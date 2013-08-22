@@ -31,7 +31,7 @@
 			var d7 = [];
 
 			var startDay = new Date(0);
-			var previousValue = 'False';
+			var previousValue = 'True';
 
 			dataArray.forEach (function(line){
 			// console.log(line)
@@ -42,9 +42,9 @@
 				var currentValue = line[3];
 
 				if (previousValue != currentValue){
-					if (currentValue =='True')
+					if (currentValue =='False')
 						startDay = theTime;
-					else if (currentValue == 'False'){
+					else if (currentValue == 'True'){
 						d1.push({ xaxis: { from: startDay, to: theTime } });
 					}
 				}
