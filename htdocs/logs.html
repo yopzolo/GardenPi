@@ -52,7 +52,7 @@
 				previousValue = currentValue;
 
 				d2.push([theTime, line[1]<50?line[1]:0]); //temp
-				d3.push([theTime, line[2]<50?line[2]:0]); //humidité
+				d3.push([theTime, line[2]<100?line[2]:0]); //humidité
 
 				if (line[4]=='True') d4.push([theTime, 20]); //Arrosage
 				if (line[5]=='True') d5.push([theTime, 32]); //Extraction
