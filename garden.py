@@ -22,7 +22,8 @@ import json
 import string
 
 from config import RegisterState, RegisterStateLogger
-from config import RootConfig, ConfigRunner, ConfigEncoder, ConfigFile
+from RootRunner import RootConfig, RootRunner
+from config import ConfigEncoder, ConfigFile
 from datetime import time, timedelta
 
 # webiopi.setDebug()
@@ -39,7 +40,7 @@ BRUMFAN = 27
 
 config = False
 # = RootConfig()
-runner  = ConfigRunner()
+runner  = RootRunner()
 current = RegisterState()
 logger = RegisterStateLogger('./GardenPy_Logs.txt', timedelta(minutes=5))
 
